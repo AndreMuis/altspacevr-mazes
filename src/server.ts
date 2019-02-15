@@ -8,8 +8,6 @@ import { resolve as resolvePath } from 'path';
 
 import Mazes from './app';
 
-import { userInfo } from 'os';
-
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
 
