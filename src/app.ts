@@ -8,7 +8,7 @@ export default class Mazes {
         this.context.onStarted(() => this.started());
     }
     
-    private async started() {
+    private async started() {  
         this.createCells(10, 10);
 
         this.cells.forEach((cell) => {
