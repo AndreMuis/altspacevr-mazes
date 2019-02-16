@@ -11,18 +11,32 @@ export default class Mazes {
     private async started() {  
         this.createCells(10, 10);
 
+        var xOffset = -1;
+        var zOffset = -1;
+
         this.cells.forEach((cell) => {
             if (cell.type == 1) {
-                const boxActor = MRESDK.Actor.CreatePrimitive(this.context, {
+                /*
+                MRESDK.Actor.CreatePrimitive(this.context, {
                     definition: {
                         shape: MRESDK.PrimitiveShape.Box,
                         dimensions: { x: 1, y: 1, z: 1 }
                     },
                     addCollider: true,
                     actor: {
-                        name: 'Box',
                         transform: {
-                            position: { x: cell.x, y: 0.3, z: cell.y }
+                            position: { x: cell.x, y: 0, z: cell.y }
+                        }
+                    }
+                });
+                */
+
+                MRESDK.Actor.CreateFromLibrary(this.context, {
+                    resourceId: "1131742136107008955",
+                    actor: {
+                        transform: {
+                            position: { x: xOffset + cell.x, y: 0.0, z: zOffset + cell.y },
+                            scale: { x: 0.2, y: 0.2, z: 0.2 }
                         }
                     }
                 });
