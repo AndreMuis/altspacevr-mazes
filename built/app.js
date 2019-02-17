@@ -18,34 +18,91 @@ class Mazes {
     }
     async started() {
         this.createCells(10, 10);
-        var xOffset = -1;
-        var zOffset = -1;
+        var mazeXOffset = -3;
+        var mazeYOffset = -1.3;
+        var mazeZOffset = -3;
+        var floorXOffset = 2.0;
+        var floorYOffset = 0.0;
+        var floorZOffset = 2.0;
+        var wallXOffset = 1.0;
+        var wallYOffset = 1.0;
+        var wallZOffset = 1.0;
+        var ceilingXOffset = 2.0;
+        var ceilingYOffset = 4.0;
+        var ceilingZOffset = 2.0;
+        MRESDK.Actor.CreatePrimitive(this.context, {
+            definition: {
+                shape: MRESDK.PrimitiveShape.Sphere,
+                radius: 0.1
+            },
+            actor: {
+                transform: {
+                    position: { x: mazeXOffset, y: mazeYOffset, z: mazeZOffset }
+                }
+            }
+        });
         this.cells.forEach((cell) => {
+            var mazeX = 2.0 * cell.x;
+            var mazeZ = 2.0 * cell.y;
+            var artifactScale = { x: 0.4, y: 0.4, z: 0.4 };
             if (cell.type == 1) {
-                /*
-                MRESDK.Actor.CreatePrimitive(this.context, {
-                    definition: {
-                        shape: MRESDK.PrimitiveShape.Box,
-                        dimensions: { x: 1, y: 1, z: 1 }
-                    },
-                    addCollider: true,
-                    actor: {
-                        transform: {
-                            position: { x: cell.x, y: 0, z: cell.y }
-                        }
-                    }
-                });
-                */
+                // wall
                 MRESDK.Actor.CreateFromLibrary(this.context, {
                     resourceId: "1131742136107008955",
                     actor: {
                         transform: {
-                            position: { x: xOffset + cell.x, y: 0.0, z: zOffset + cell.y },
-                            scale: { x: 0.2, y: 0.2, z: 0.2 }
+                            position: {
+                                x: mazeX + mazeXOffset + wallXOffset,
+                                y: mazeYOffset + wallYOffset,
+                                z: mazeZ + mazeZOffset + wallZOffset
+                            },
+                            scale: artifactScale
+                        }
+                    }
+                });
+                MRESDK.Actor.CreateFromLibrary(this.context, {
+                    resourceId: "1131742136107008955",
+                    actor: {
+                        transform: {
+                            position: {
+                                x: mazeX + mazeXOffset + wallXOffset,
+                                y: mazeYOffset + wallYOffset + 2.0,
+                                z: mazeZ + mazeZOffset + wallZOffset
+                            },
+                            scale: artifactScale
                         }
                     }
                 });
             }
+            // floor
+            MRESDK.Actor.CreateFromLibrary(this.context, {
+                resourceId: "1131741079352116217",
+                actor: {
+                    transform: {
+                        position: {
+                            x: mazeX + mazeXOffset + floorXOffset,
+                            y: mazeYOffset + floorYOffset,
+                            z: mazeZ + mazeZOffset + floorZOffset
+                        },
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
+                        scale: artifactScale
+                    }
+                }
+            });
+            MRESDK.Actor.CreateFromLibrary(this.context, {
+                resourceId: "1131740277568962631",
+                actor: {
+                    transform: {
+                        position: {
+                            x: mazeX + mazeXOffset + ceilingXOffset,
+                            y: mazeYOffset + ceilingYOffset,
+                            z: mazeZ + mazeZOffset + ceilingZOffset
+                        },
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
+                        scale: artifactScale
+                    }
+                }
+            });
         });
     }
     createCells(width, height) {
@@ -53,6 +110,7 @@ class Mazes {
         var userCallback = (x, y, value) => {
             const cell = new Cell(x, y, value);
             this.cells.push(cell);
+            console.log(x);
         };
         map.create(userCallback);
     }
