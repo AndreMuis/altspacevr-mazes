@@ -18,18 +18,19 @@ class Mazes {
     }
     async started() {
         this.createCells(10, 10);
-        var mazeXOffset = -3;
+        var mazeScale = 3.0;
+        var mazeXOffset = -(mazeScale + mazeScale / 2.0);
         var mazeYOffset = -1.3;
-        var mazeZOffset = -3;
-        var floorXOffset = 2.0;
+        var mazeZOffset = -(mazeScale + mazeScale / 2.0);
+        var floorXOffset = mazeScale;
         var floorYOffset = 0.0;
-        var floorZOffset = 2.0;
-        var wallXOffset = 1.0;
-        var wallYOffset = 1.0;
-        var wallZOffset = 1.0;
-        var ceilingXOffset = 2.0;
-        var ceilingYOffset = 4.0;
-        var ceilingZOffset = 2.0;
+        var floorZOffset = mazeScale;
+        var wallXOffset = mazeScale / 2.0;
+        var wallYOffset = mazeScale / 2.0;
+        var wallZOffset = mazeScale / 2.0;
+        var ceilingXOffset = mazeScale;
+        var ceilingYOffset = mazeScale;
+        var ceilingZOffset = mazeScale;
         MRESDK.Actor.CreatePrimitive(this.context, {
             definition: {
                 shape: MRESDK.PrimitiveShape.Sphere,
@@ -42,9 +43,9 @@ class Mazes {
             }
         });
         this.cells.forEach((cell) => {
-            var mazeX = 2.0 * cell.x;
-            var mazeZ = 2.0 * cell.y;
-            var artifactScale = { x: 0.4, y: 0.4, z: 0.4 };
+            var mazeX = mazeScale * cell.x;
+            var mazeZ = mazeScale * cell.y;
+            var artifactScale = { x: 0.2 * mazeScale, y: 0.2 * mazeScale, z: 0.2 * mazeScale };
             if (cell.type == 1) {
                 // wall
                 MRESDK.Actor.CreateFromLibrary(this.context, {
@@ -54,19 +55,6 @@ class Mazes {
                             position: {
                                 x: mazeX + mazeXOffset + wallXOffset,
                                 y: mazeYOffset + wallYOffset,
-                                z: mazeZ + mazeZOffset + wallZOffset
-                            },
-                            scale: artifactScale
-                        }
-                    }
-                });
-                MRESDK.Actor.CreateFromLibrary(this.context, {
-                    resourceId: "1131742136107008955",
-                    actor: {
-                        transform: {
-                            position: {
-                                x: mazeX + mazeXOffset + wallXOffset,
-                                y: mazeYOffset + wallYOffset + 2.0,
                                 z: mazeZ + mazeZOffset + wallZOffset
                             },
                             scale: artifactScale
