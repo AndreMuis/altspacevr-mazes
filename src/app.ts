@@ -1,6 +1,5 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
 import * as ROT from 'rot-js'
-import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
 enum CellType {
     Empty = 0,
@@ -13,7 +12,7 @@ export default class Mazes {
     }
     
     private async started() {  
-        var maze = new Maze(20, 20, 3.0);
+        var maze = new Maze(25, 25, 3.0);
 
         maze.populateCells();
         
@@ -22,7 +21,7 @@ export default class Mazes {
 
         maze.draw(this.context);
         maze.drawTeleporter(this.context);
-        maze.drawOrigin(this.context);
+        // maze.drawOrigin(this.context);
     }
 }
 
@@ -198,7 +197,7 @@ class Maze {
         let y = this.originY;
         let z = this.originZ + this.scale * (cell.y - this.startCell.y); 
 
-        return new Vector3(x, y, z);
+        return new MRESDK.Vector3(x, y, z);
     }
 
     public drawTeleporter(context: MRESDK.Context) {

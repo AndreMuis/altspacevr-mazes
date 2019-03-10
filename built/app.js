@@ -9,7 +9,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MRESDK = __importStar(require("@microsoft/mixed-reality-extension-sdk"));
 const ROT = __importStar(require("rot-js"));
-const mixed_reality_extension_sdk_1 = require("@microsoft/mixed-reality-extension-sdk");
 var CellType;
 (function (CellType) {
     CellType[CellType["Empty"] = 0] = "Empty";
@@ -22,13 +21,13 @@ class Mazes {
         this.context.onStarted(() => this.started());
     }
     async started() {
-        var maze = new Maze(20, 20, 3.0);
+        var maze = new Maze(25, 25, 3.0);
         maze.populateCells();
         maze.setDeadEnds();
         maze.setStartAndEnd();
         maze.draw(this.context);
         maze.drawTeleporter(this.context);
-        maze.drawOrigin(this.context);
+        // maze.drawOrigin(this.context);
     }
 }
 exports.default = Mazes;
@@ -160,7 +159,7 @@ class Maze {
         let x = this.originX + this.scale * (cell.x - this.startCell.x);
         let y = this.originY;
         let z = this.originZ + this.scale * (cell.y - this.startCell.y);
-        return new mixed_reality_extension_sdk_1.Vector3(x, y, z);
+        return new MRESDK.Vector3(x, y, z);
     }
     drawTeleporter(context) {
         let position = this.getPosition(this.endCell);
