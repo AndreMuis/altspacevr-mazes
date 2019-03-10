@@ -9,53 +9,115 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MRESDK = __importStar(require("@microsoft/mixed-reality-extension-sdk"));
 const ROT = __importStar(require("rot-js"));
+var CellType;
+(function (CellType) {
+    CellType[CellType["Empty"] = 0] = "Empty";
+    CellType[CellType["Wall"] = 1] = "Wall";
+})(CellType || (CellType = {}));
 class Mazes {
     constructor(context, baseUrl) {
         this.context = context;
         this.baseUrl = baseUrl;
-        this.cells = [];
         this.context.onStarted(() => this.started());
     }
     async started() {
-        this.createCells(10, 10);
-        var mazeScale = 3.0;
-        var mazeXOffset = -(mazeScale + mazeScale / 2.0);
-        var mazeYOffset = -1.3;
-        var mazeZOffset = -(mazeScale + mazeScale / 2.0);
-        var floorXOffset = mazeScale;
-        var floorYOffset = 0.0;
-        var floorZOffset = mazeScale;
-        var wallXOffset = mazeScale / 2.0;
-        var wallYOffset = mazeScale / 2.0;
-        var wallZOffset = mazeScale / 2.0;
-        var ceilingXOffset = mazeScale;
-        var ceilingYOffset = mazeScale;
-        var ceilingZOffset = mazeScale;
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Sphere,
-                radius: 0.1
-            },
-            actor: {
-                transform: {
-                    position: { x: mazeXOffset, y: mazeYOffset, z: mazeZOffset }
-                }
+        var maze = new Maze(10, 10, 3.0);
+        maze.populateCells();
+        maze.setDeadEnds();
+        maze.setStartAndEnd();
+        maze.draw(this.context);
+        maze.drawOrigin(this.context);
+    }
+}
+exports.default = Mazes;
+class Maze {
+    constructor(width, height, scale) {
+        this.cells = [];
+        this.deadEndCells = [];
+        this.startCell = null;
+        this.endCell = null;
+        this.width = width;
+        this.height = height;
+        this.scale = scale;
+        this.originX = -this.scale / 2.0;
+        this.originY = -1.3;
+        this.originZ = -this.scale / 2.0;
+    }
+    populateCells() {
+        var map = new ROT.Map.DividedMaze(this.width, this.height);
+        var userCallback = (x, y, value) => {
+            const cell = new Cell(x, y, value);
+            this.cells.push(cell);
+        };
+        map.create(userCallback);
+    }
+    findCell(x, y) {
+        return this.cells.filter(cell => cell.x == x && cell.y == y)[0];
+    }
+    findCells(type) {
+        return this.cells.filter(cell => cell.type == type);
+    }
+    setDeadEnds() {
+        var surrondingWalls;
+        for (let cell of this.findCells(CellType.Empty)) {
+            surrondingWalls = 0;
+            if (cell.x - 1 >= 0 && this.findCell(cell.x - 1, cell.y).type == CellType.Wall) {
+                surrondingWalls = surrondingWalls + 1;
             }
-        });
-        this.cells.forEach((cell) => {
-            var mazeX = mazeScale * cell.x;
-            var mazeZ = mazeScale * cell.y;
-            var artifactScale = { x: 0.2 * mazeScale, y: 0.2 * mazeScale, z: 0.2 * mazeScale };
-            if (cell.type == 1) {
-                // wall
-                MRESDK.Actor.CreateFromLibrary(this.context, {
-                    resourceId: "1131742136107008955",
+            if (cell.x + 1 < this.width && this.findCell(cell.x + 1, cell.y).type == CellType.Wall) {
+                surrondingWalls = surrondingWalls + 1;
+            }
+            if (cell.y - 1 >= 0 && this.findCell(cell.x, cell.y - 1).type == CellType.Wall) {
+                surrondingWalls = surrondingWalls + 1;
+            }
+            if (cell.y + 1 < this.height && this.findCell(cell.x, cell.y + 1).type == CellType.Wall) {
+                surrondingWalls = surrondingWalls + 1;
+            }
+            if (surrondingWalls == 3) {
+                this.deadEndCells.push(cell);
+            }
+        }
+    }
+    setStartAndEnd() {
+        let startCellIndex = Math.floor(Math.random() * this.deadEndCells.length);
+        this.startCell = this.deadEndCells[startCellIndex];
+        var longestDistance = 0;
+        for (let cell of this.deadEndCells) {
+            let distance = this.distance(this.startCell.x, this.startCell.y, cell.x, cell.y);
+            if (distance > longestDistance) {
+                longestDistance = distance;
+                this.endCell = cell;
+            }
+        }
+    }
+    distance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+    draw(context) {
+        var floorXOffset = this.scale;
+        var floorYOffset = 0.0;
+        var floorZOffset = this.scale;
+        var wallXOffset = this.scale / 2.0;
+        var wallYOffset = this.scale / 2.0;
+        var wallZOffset = this.scale / 2.0;
+        var ceilingXOffset = this.scale;
+        var ceilingYOffset = this.scale;
+        var ceilingZOffset = this.scale;
+        console.log(this.startCell.type);
+        for (let cell of this.cells) {
+            var mazeX = this.scale * (cell.x - this.startCell.x);
+            var mazeZ = this.scale * (cell.y - this.startCell.y);
+            var artifactScale = { x: 0.2 * this.scale, y: 0.2 * this.scale, z: 0.2 * this.scale };
+            // wall
+            if (cell.type == CellType.Wall) {
+                MRESDK.Actor.CreateFromLibrary(context, {
+                    resourceId: "artifact:1131742136107008955",
                     actor: {
                         transform: {
                             position: {
-                                x: mazeX + mazeXOffset + wallXOffset,
-                                y: mazeYOffset + wallYOffset,
-                                z: mazeZ + mazeZOffset + wallZOffset
+                                x: this.originX + mazeX + wallXOffset,
+                                y: this.originY + wallYOffset,
+                                z: this.originZ + mazeZ + wallZOffset
                             },
                             scale: artifactScale
                         }
@@ -63,47 +125,51 @@ class Mazes {
                 });
             }
             // floor
-            MRESDK.Actor.CreateFromLibrary(this.context, {
-                resourceId: "1131741079352116217",
+            MRESDK.Actor.CreateFromLibrary(context, {
+                resourceId: "artifact:1131741079352116217",
                 actor: {
                     transform: {
                         position: {
-                            x: mazeX + mazeXOffset + floorXOffset,
-                            y: mazeYOffset + floorYOffset,
-                            z: mazeZ + mazeZOffset + floorZOffset
+                            x: this.originX + mazeX + floorXOffset,
+                            y: this.originY + floorYOffset,
+                            z: this.originZ + mazeZ + floorZOffset
                         },
                         rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
                         scale: artifactScale
                     }
                 }
             });
-            MRESDK.Actor.CreateFromLibrary(this.context, {
-                resourceId: "1131740277568962631",
+            // ceiling
+            MRESDK.Actor.CreateFromLibrary(context, {
+                resourceId: "artifact:1131740277568962631",
                 actor: {
                     transform: {
                         position: {
-                            x: mazeX + mazeXOffset + ceilingXOffset,
-                            y: mazeYOffset + ceilingYOffset,
-                            z: mazeZ + mazeZOffset + ceilingZOffset
+                            x: this.originX + mazeX + ceilingXOffset,
+                            y: this.originY + ceilingYOffset,
+                            z: this.originZ + mazeZ + ceilingZOffset
                         },
                         rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
                         scale: artifactScale
                     }
                 }
             });
+        }
+    }
+    drawOrigin(context) {
+        MRESDK.Actor.CreatePrimitive(context, {
+            definition: {
+                shape: MRESDK.PrimitiveShape.Sphere,
+                radius: 0.1
+            },
+            actor: {
+                transform: {
+                    position: { x: this.originX, y: this.originY, z: this.originZ }
+                }
+            }
         });
     }
-    createCells(width, height) {
-        var map = new ROT.Map.DividedMaze(width, height);
-        var userCallback = (x, y, value) => {
-            const cell = new Cell(x, y, value);
-            this.cells.push(cell);
-            console.log(x);
-        };
-        map.create(userCallback);
-    }
 }
-exports.default = Mazes;
 class Cell {
     constructor(x, y, type) {
         this.x = x;
