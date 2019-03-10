@@ -9,6 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MRESDK = __importStar(require("@microsoft/mixed-reality-extension-sdk"));
 const ROT = __importStar(require("rot-js"));
+const mixed_reality_extension_sdk_1 = require("@microsoft/mixed-reality-extension-sdk");
 var CellType;
 (function (CellType) {
     CellType[CellType["Empty"] = 0] = "Empty";
@@ -21,11 +22,12 @@ class Mazes {
         this.context.onStarted(() => this.started());
     }
     async started() {
-        var maze = new Maze(35, 35, 3.0);
+        var maze = new Maze(20, 20, 3.0);
         maze.populateCells();
         maze.setDeadEnds();
         maze.setStartAndEnd();
         maze.draw(this.context);
+        maze.drawTeleporter(this.context);
         maze.drawOrigin(this.context);
     }
 }
@@ -103,11 +105,9 @@ class Maze {
         var ceilingXOffset = this.scale;
         var ceilingYOffset = this.scale;
         var ceilingZOffset = this.scale;
-        console.log(this.startCell.type);
+        var artifactScale = { x: 0.2 * this.scale, y: 0.2 * this.scale, z: 0.2 * this.scale };
         for (let cell of this.cells) {
-            var mazeX = this.scale * (cell.x - this.startCell.x);
-            var mazeZ = this.scale * (cell.y - this.startCell.y);
-            var artifactScale = { x: 0.2 * this.scale, y: 0.2 * this.scale, z: 0.2 * this.scale };
+            var position = this.getPosition(cell);
             // wall
             if (cell.type == CellType.Wall) {
                 MRESDK.Actor.CreateFromLibrary(context, {
@@ -115,9 +115,9 @@ class Maze {
                     actor: {
                         transform: {
                             position: {
-                                x: this.originX + mazeX + wallXOffset,
-                                y: this.originY + wallYOffset,
-                                z: this.originZ + mazeZ + wallZOffset
+                                x: position.x + wallXOffset,
+                                y: position.y + wallYOffset,
+                                z: position.z + wallZOffset
                             },
                             scale: artifactScale
                         }
@@ -130,9 +130,9 @@ class Maze {
                 actor: {
                     transform: {
                         position: {
-                            x: this.originX + mazeX + floorXOffset,
-                            y: this.originY + floorYOffset,
-                            z: this.originZ + mazeZ + floorZOffset
+                            x: position.x + floorXOffset,
+                            y: position.y + floorYOffset,
+                            z: position.z + floorZOffset
                         },
                         rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
                         scale: artifactScale
@@ -145,9 +145,9 @@ class Maze {
                 actor: {
                     transform: {
                         position: {
-                            x: this.originX + mazeX + ceilingXOffset,
-                            y: this.originY + ceilingYOffset,
-                            z: this.originZ + mazeZ + ceilingZOffset
+                            x: position.x + ceilingXOffset,
+                            y: position.y + ceilingYOffset,
+                            z: position.z + ceilingZOffset
                         },
                         rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
                         scale: artifactScale
@@ -155,6 +155,27 @@ class Maze {
                 }
             });
         }
+    }
+    getPosition(cell) {
+        let x = this.originX + this.scale * (cell.x - this.startCell.x);
+        let y = this.originY;
+        let z = this.originZ + this.scale * (cell.y - this.startCell.y);
+        return new mixed_reality_extension_sdk_1.Vector3(x, y, z);
+    }
+    drawTeleporter(context) {
+        let position = this.getPosition(this.endCell);
+        MRESDK.Actor.CreateFromLibrary(context, {
+            resourceId: "teleporter:1101096999417021156",
+            actor: {
+                transform: {
+                    position: {
+                        x: position.x + this.scale / 2.0,
+                        y: position.y,
+                        z: position.z + this.scale / 2.0
+                    }
+                }
+            }
+        });
     }
     drawOrigin(context) {
         MRESDK.Actor.CreatePrimitive(context, {
