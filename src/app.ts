@@ -12,7 +12,7 @@ export default class Mazes {
     }
     
     private async started() {  
-        var maze = new Maze(60, 60, 3.0);
+        var maze = new Maze(50, 50, 3.0);
 
         maze.populateCells();
         

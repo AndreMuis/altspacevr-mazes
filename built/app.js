@@ -21,7 +21,7 @@ class Mazes {
         this.context.onStarted(() => this.started());
     }
     async started() {
-        var maze = new Maze(30, 30, 3.0);
+        var maze = new Maze(50, 50, 3.0);
         maze.populateCells();
         maze.setDeadEnds();
         maze.setStartAndEnd();
