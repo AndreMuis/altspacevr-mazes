@@ -6,7 +6,7 @@
 import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 
-import Mazes from './app';
+import App from './app';
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
@@ -16,6 +16,6 @@ const server = new WebHost({
     baseDir: resolvePath(__dirname, '../public')
 });
 
-server.adapter.onConnection(context => new Mazes(context, server.baseUrl));
+server.adapter.onConnection(context => new App(context, server.baseUrl));
 
 export default server;
