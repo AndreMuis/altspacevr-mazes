@@ -15,7 +15,7 @@
     "clean": "tsc --build --clean",
     "build": "tsc --build",
     "lint": "tslint -p ./tsconfig.json src/**/*.ts",
-    "start": "node .",
+    "start": "node server.js",
     "debug": "node --nolazy --inspect-brk=9229 ."
   },
   "devDependencies": {
