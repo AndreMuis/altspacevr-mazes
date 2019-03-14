@@ -1,5 +1,5 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
-import { Maze } from "./Maze";
+import { Maze } from "./maze";
 export declare class MazeRenderer {
     private context;
     private maze;

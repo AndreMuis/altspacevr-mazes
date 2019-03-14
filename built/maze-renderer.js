@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MRESDK = __importStar(require("@microsoft/mixed-reality-extension-sdk"));
-const Maze_1 = require("./Maze");
+const maze_1 = require("./maze");
 const utility_1 = require("./utility");
 class MazeRenderer {
     constructor(context, maze) {
@@ -21,7 +21,7 @@ class MazeRenderer {
             var position = this.getPosition(cell);
             this.drawFloor(position, artifactScale);
             this.drawCeiling(position, artifactScale);
-            if (cell.type == Maze_1.CellType.Wall) {
+            if (cell.type == maze_1.CellType.Wall) {
                 this.drawWall(position, artifactScale);
             }
         }

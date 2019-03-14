@@ -1,6 +1,6 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
 
-import { Cell, CellType, Maze } from "./Maze"
+import { Cell, CellType, Maze } from "./maze"
 import { Utility } from "./utility";
 
 export class MazeRenderer {
