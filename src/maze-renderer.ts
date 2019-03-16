@@ -20,7 +20,7 @@ export class MazeRenderer {
 
             this.drawFloor(position, artifactScale);
             this.drawCeiling(position, artifactScale);
-
+ 
             if (cell.type == CellType.Wall) {
                 this.drawWall(position, artifactScale);
             }
@@ -84,7 +84,7 @@ export class MazeRenderer {
 
         let resourceId: string;
 
-        if (Utility.randomNumber(1, 10) <= 9) {
+        if (Utility.randomNumber(1, 9) <= 8) {
             resourceId = "artifact:1131742136107008955";
         } else {
             resourceId = "artifact:1131742168336040892";
