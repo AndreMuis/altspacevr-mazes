@@ -11,7 +11,7 @@ export enum CellType {
 export class Cell {
     constructor(public x: number, public y: number, public type: CellType) {
     }
-}
+}   
 
 export class Maze {
     public cells: Cell[];
