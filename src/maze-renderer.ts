@@ -35,9 +35,9 @@ export class MazeRenderer {
         let resourceId: string;
 
         if (Utility.randomNumber(1, 10) <= 9) {
-            resourceId = "artifact:1131741079352116217";
+            resourceId = "artifact:1164716299905925950";
         } else {
-            resourceId = "artifact:1131747812820648013";
+            resourceId = "artifact:1164716290519073596";
         }
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
@@ -49,7 +49,6 @@ export class MazeRenderer {
                         y: position.y + floorYOffset, 
                         z: position.z + floorZOffset 
                     },
-                    rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
                     scale: artifactScale
                 }
             }
@@ -62,7 +61,7 @@ export class MazeRenderer {
         var ceilingZOffset = this.maze.scale;
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:1131740277568962631",
+            resourceId: "artifact:1164716295308968765",
             actor: {
                 transform: {
                     position: { 
@@ -70,7 +69,6 @@ export class MazeRenderer {
                         y: position.y + ceilingYOffset, 
                         z: position.z + ceilingZOffset 
                     },
-                    rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
                     scale: artifactScale
                 }
             }
@@ -85,9 +83,9 @@ export class MazeRenderer {
         let resourceId: string;
 
         if (Utility.randomNumber(1, 9) <= 8) {
-            resourceId = "artifact:1131742136107008955";
+            resourceId = "artifact:1164716284772877115";
         } else {
-            resourceId = "artifact:1131742168336040892";
+            resourceId = "artifact:1164716304737764160";
         }
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
@@ -122,7 +120,16 @@ export class MazeRenderer {
         });
     }
 
-    public drawOrigin() {
+    private getPosition(cell: Cell): MRESDK.Vector3 {
+        let x = this.maze.originX + this.maze.scale * (cell.x - this.maze.startCell.x);
+        let y = this.maze.originY;
+        let z = this.maze.originZ + this.maze.scale * (cell.y - this.maze.startCell.y); 
+
+        return new MRESDK.Vector3(x, y, z);
+    }
+
+    public drawLayoutTests() {
+        // origin
         MRESDK.Actor.CreatePrimitive(this.context, {
             definition: {
                 shape: MRESDK.PrimitiveShape.Sphere,
@@ -130,17 +137,38 @@ export class MazeRenderer {
             },
             actor: {
                 transform: {
-                    position: { x: this.maze.originX, y: this.maze.originY, z: this.maze.originZ }
+                    position: { x: 0, y: 0, z: 0 }
                 }
             }
         });
-    }
 
-    private getPosition(cell: Cell): MRESDK.Vector3 {
-        let x = this.maze.originX + this.maze.scale * (cell.x - this.maze.startCell.x);
-        let y = this.maze.originY;
-        let z = this.maze.originZ + this.maze.scale * (cell.y - this.maze.startCell.y); 
+        // unit cube
+        MRESDK.Actor.CreatePrimitive(this.context, {
+            definition: {
+                shape: MRESDK.PrimitiveShape.Box,
+                dimensions: { x: 1, y: 1, z: 1 }
+            },
+            actor: {
+                transform: {
+                    position: { x: 0, y: 0, z: 0 }
+                }
+            }
+        });
 
-        return new MRESDK.Vector3(x, y, z);
+
+        MRESDK.Actor.CreateFromLibrary(this.context, {
+            resourceId: "artifact:1164716299905925950",
+            actor: {
+                transform: {
+                    position: { 
+                        x: 0, 
+                        y: 0, 
+                        z: 0 
+                    },
+                    scale: {x: 0.2, y: 0.2, z: 0.2}
+                }
+            }
+        });
+
     }
 }

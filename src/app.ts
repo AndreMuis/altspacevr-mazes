@@ -18,9 +18,10 @@ export default class App {
 
         let renderer = new MazeRenderer(this.context, maze); 
 
+        // renderer.drawLayoutTests();
+
         renderer.draw();
         renderer.drawTeleporter();
-        // renderer.drawOrigin();
     }
 }
     

@@ -1,4 +1,3 @@
-import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
 import * as ROT from 'rot-js';
 
 import { Utility } from "./utility";
