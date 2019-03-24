@@ -174,5 +174,22 @@ export class MazeRenderer {
                 }
             }
         });
+
+        for (var x = 0; x < 100; x = x + 1) {
+            for (var y = 0; y < 100; y = y + 1) {
+                MRESDK.Actor.CreatePrimitive(this.context, {
+                    definition: {
+                        shape: MRESDK.PrimitiveShape.Box,
+                        dimensions: { x: 0.99, y: 0.99, z: 0.99 }
+                    },
+                    addCollider: true,
+                    actor: {
+                        transform: {
+                            position: { x: x, y: 0, z: y }
+                        }
+                    }
+                });        
+            }
+        }
     }
 }

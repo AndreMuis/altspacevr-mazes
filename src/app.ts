@@ -9,7 +9,7 @@ export default class App {
     }
     
     private async started() {  
-        var maze = new Maze(100, 100, 3.0);
+        var maze = new Maze(25, 25, 3.0);
 
         maze.populateCells();
         
@@ -18,10 +18,10 @@ export default class App {
 
         let renderer = new MazeRenderer(this.context, maze); 
 
-        //renderer.drawLayoutTests();
+        renderer.drawLayoutTests();
 
-        renderer.draw();
-        renderer.drawTeleporter();
+        //renderer.draw();
+        //renderer.drawTeleporter();
     }
 }
     
