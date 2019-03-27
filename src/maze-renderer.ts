@@ -193,16 +193,14 @@ export class MazeRenderer {
                 */
 
                 MRESDK.Actor.CreateFromLibrary(this.context, {
-                    resourceId: "artifact:1171073382033130096",
+                    resourceId: "artifact:1172057012918288853",
                     actor: {
                         transform: {
                             position: { 
                                 x: 2.0 * x, 
                                 y: 0.0, 
                                 z: 2.0 * y
-                            },
-                            rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
-                            scale: {x: 1.0, y: 1.0, z: 1.0}
+                            }
                         }
                     }
                 });
@@ -213,3 +211,4 @@ export class MazeRenderer {
 }
 
 // 900 simple cubes - 30 FPS
+// 900 textures cubes - 30-40 FPS
