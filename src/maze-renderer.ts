@@ -193,7 +193,7 @@ export class MazeRenderer {
                 */
 
                 MRESDK.Actor.CreateFromLibrary(this.context, {
-                    resourceId: "artifact:1171073388207145585",
+                    resourceId: "artifact:1172068420133322845",
                     actor: {
                         transform: {
                             position: { 
