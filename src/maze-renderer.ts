@@ -35,9 +35,9 @@ export class MazeRenderer {
         let resourceId: string;
 
         if (Utility.randomNumber(1, 10) <= 9) {
-            resourceId = "artifact:1169875725830848731";
+            resourceId = "artifact:1171073392846045810";
         } else {
-            resourceId = "artifact:1169875725830848731";
+            resourceId = "artifact:1171073392846045810";
         }
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
@@ -62,7 +62,7 @@ export class MazeRenderer {
         var ceilingZOffset = this.maze.scale / 2.0;
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:1169875730385862876",
+            resourceId: "artifact:1171073388207145585",
             actor: {
                 transform: {
                     position: { 
@@ -85,9 +85,9 @@ export class MazeRenderer {
         let resourceId: string;
 
         if (Utility.randomNumber(1, 9) <= 8) {
-            resourceId = "artifact:1169875734781493469";
+            resourceId = "artifact:1171073382033130096";
         } else {
-            resourceId = "artifact:1169875734781493469";
+            resourceId = "artifact:1171073382033130096";
         }
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
@@ -158,7 +158,6 @@ export class MazeRenderer {
                 }
             }
         });
-        */
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: "artifact:1169875730385862876",
@@ -174,13 +173,14 @@ export class MazeRenderer {
                 }
             }
         });
+        */
 
-        for (var x = 0; x < 100; x = x + 1) {
-            for (var y = 0; y < 100; y = y + 1) {
+        for (var x = 0; x < 20; x = x + 2) {
+            for (var y = 0; y < 20; y = y + 2) {
                 MRESDK.Actor.CreatePrimitive(this.context, {
                     definition: {
                         shape: MRESDK.PrimitiveShape.Box,
-                        dimensions: { x: 0.99, y: 0.99, z: 0.99 }
+                        dimensions: { x: 1.0, y: 1.0, z: 1.0 }
                     },
                     addCollider: true,
                     actor: {
