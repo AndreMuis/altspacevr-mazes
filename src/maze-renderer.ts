@@ -175,8 +175,8 @@ export class MazeRenderer {
         });
         */
 
-        for (var x = 0; x < 15; x = x + 1) {
-            for (var y = 0; y < 15; y = y + 1) {
+        for (var x = 0; x < 20; x = x + 1) {
+            for (var y = 0; y < 20; y = y + 1) {
                 /*
                 MRESDK.Actor.CreatePrimitive(this.context, {
                     definition: {
@@ -193,7 +193,7 @@ export class MazeRenderer {
                 */
 
                 MRESDK.Actor.CreateFromLibrary(this.context, {
-                    resourceId: "artifact:1172068420133322845",
+                    resourceId: "artifact:1172068414085136475",
                     actor: {
                         transform: {
                             position: { 
