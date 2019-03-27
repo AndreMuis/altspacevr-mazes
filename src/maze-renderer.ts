@@ -175,8 +175,8 @@ export class MazeRenderer {
         });
         */
 
-        for (var x = 0; x < 20; x = x + 2) {
-            for (var y = 0; y < 20; y = y + 2) {
+        for (var x = 0; x < 30; x = x + 1) {
+            for (var y = 0; y < 30; y = y + 1) {
                 MRESDK.Actor.CreatePrimitive(this.context, {
                     definition: {
                         shape: MRESDK.PrimitiveShape.Box,
@@ -185,7 +185,7 @@ export class MazeRenderer {
                     addCollider: true,
                     actor: {
                         transform: {
-                            position: { x: x, y: 0, z: y }
+                            position: { x: 2.0 * x, y: 0, z: 2.0 * y }
                         }
                     }
                 });        
