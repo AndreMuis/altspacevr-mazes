@@ -175,8 +175,8 @@ export class MazeRenderer {
         });
         */
 
-        for (var x = 0; x < 30; x = x + 1) {
-            for (var y = 0; y < 30; y = y + 1) {
+        for (var x = 0; x < 15; x = x + 1) {
+            for (var y = 0; y < 15; y = y + 1) {
                 /*
                 MRESDK.Actor.CreatePrimitive(this.context, {
                     definition: {
