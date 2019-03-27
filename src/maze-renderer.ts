@@ -177,6 +177,7 @@ export class MazeRenderer {
 
         for (var x = 0; x < 30; x = x + 1) {
             for (var y = 0; y < 30; y = y + 1) {
+                /*
                 MRESDK.Actor.CreatePrimitive(this.context, {
                     definition: {
                         shape: MRESDK.PrimitiveShape.Box,
@@ -188,8 +189,27 @@ export class MazeRenderer {
                             position: { x: 2.0 * x, y: 0, z: 2.0 * y }
                         }
                     }
-                });        
+                });
+                */
+
+                MRESDK.Actor.CreateFromLibrary(this.context, {
+                    resourceId: "artifact:1171073382033130096",
+                    actor: {
+                        transform: {
+                            position: { 
+                                x: 2.0 * x, 
+                                y: 0.0, 
+                                z: 2.0 * y
+                            },
+                            rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
+                            scale: {x: 1.0, y: 1.0, z: 1.0}
+                        }
+                    }
+                });
+        
             }
         }
     }
 }
+
+// 900 simple cubes - 30 FPS
