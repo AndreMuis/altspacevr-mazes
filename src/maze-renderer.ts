@@ -192,6 +192,7 @@ export class MazeRenderer {
                 });
                 */
 
+                /*
                 MRESDK.Actor.CreateFromLibrary(this.context, {
                     resourceId: "artifact:1172068420133322845",
                     actor: {
@@ -205,8 +206,24 @@ export class MazeRenderer {
                         }
                     }
                 });
+                */
             }
         }
+
+        MRESDK.Actor.CreateFromLibrary(this.context, {
+            resourceId: "artifact:1172114367617958593",
+            actor: {
+                transform: {
+                    position: { 
+                        x: 0.0, 
+                        y: 0.0, 
+                        z: 0.0
+                    },
+                    rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
+                    scale: {x: 1.0, y: 1.0, z: 1.0}
+                }
+            }
+        });
     }
 }
 
