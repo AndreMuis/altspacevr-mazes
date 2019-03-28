@@ -130,6 +130,28 @@ export class MazeRenderer {
         return new MRESDK.Vector3(x, y, z);
     }
 
+    public drawToConsole() {
+        for (var y = this.maze.height - 1; y >= 0; y = y - 1) {
+            var line = ""
+
+            for (var x = 0; x < this.maze.width; x = x + 1) {
+                let cell = this.maze.findCell(x, y)
+
+                if (cell == this.maze.startCell) {
+                    line = line + "S"
+                } else if (cell == this.maze.endCell) {
+                    line = line + "E"
+                } else if (cell.type == CellType.Wall) {
+                    line = line + "W"
+                } else if (cell.type == CellType.Empty) {
+                    line = line + " "
+                }
+            }
+
+            console.log(line)
+        }
+    }
+
     public async drawLayoutTests() {
         // origin
         MRESDK.Actor.CreatePrimitive(this.context, {
