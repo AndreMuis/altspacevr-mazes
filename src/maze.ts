@@ -1,9 +1,6 @@
 import * as ROT from 'rot-js';
 
 import { Utility } from "./utility";
-import { finished } from 'stream';
-import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
-import { compileFunction } from 'vm';
 
 export enum CellType {
     Empty = 0,
@@ -157,15 +154,15 @@ export class Maze {
             var lastWall = firstWall
             var wallSegment: WallSegment
 
-            if (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall) {
-                while (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall) {
+            if (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall && wallCells.includes(lastWall.rightCell)) {
+                while (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall && wallCells.includes(lastWall.rightCell)) {
                     lastWall = lastWall.rightCell
                     wallCells.splice(wallCells.indexOf(lastWall), 1);
                 }
 
                 wallSegment = new WallSegment(firstWall.x, firstWall.y, lastWall.x - firstWall.x + 1, Orientation.Horizontal)
-            } else if (lastWall.topCell && lastWall.topCell.type == CellType.Wall) {
-                while (lastWall.topCell && lastWall.type == CellType.Wall) {
+            } else if (lastWall.topCell && lastWall.topCell.type == CellType.Wall && wallCells.includes(lastWall.topCell)) {
+                while (lastWall.topCell && lastWall.topCell.type == CellType.Wall && wallCells.includes(lastWall.topCell)) {
                     lastWall = lastWall.topCell
                     wallCells.splice(wallCells.indexOf(lastWall), 1);
                 }
@@ -173,12 +170,9 @@ export class Maze {
                 wallSegment = new WallSegment(firstWall.x, firstWall.y, lastWall.y - firstWall.y + 1, Orientation.Vertical)
             } else {
                 wallSegment = new WallSegment(firstWall.x, firstWall.y, 1, Orientation.Horizontal)
-                wallCells.splice(wallCells.indexOf(lastWall), 1);
             }
 
             this.wallSegments.push(wallSegment)
-
-            console.log(wallSegment);
         }
     }
 
