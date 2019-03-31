@@ -25,6 +25,8 @@ class Mazes {
         maze.populateCells();
         maze.setDeadEnds();
         maze.setStartAndEnd();
+        console.log(this.context.user);
+        console.log(this.context.users);
         maze.draw(this.context);
         maze.drawTeleporter(this.context);
         // maze.drawOrigin(this.context);
