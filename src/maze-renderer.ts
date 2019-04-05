@@ -233,7 +233,7 @@ export class MazeRenderer {
         }
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:1175023169560379801",
+            resourceId: "artifact:1178534470026789197",
             actor: {
                 transform: {
                     position: { 
@@ -242,7 +242,6 @@ export class MazeRenderer {
                         z: 0.0
                     },
                     //  rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
-                    scale: {x: 1.0, y: 1.0, z: 1.0}
                 }
             }
         });
