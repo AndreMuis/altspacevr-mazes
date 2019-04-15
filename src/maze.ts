@@ -1,3 +1,4 @@
+import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
 import * as ROT from 'rot-js';
 
 import { Utility } from "./utility";
@@ -22,32 +23,30 @@ export class Cell {
     public bottomCell: Cell
     public bottomRightCell: Cell
 
-    constructor(public x: number, public y: number, public type: CellType) {
+    constructor(public row: number, public column: number, public type: CellType) {
     }
 }   
 
 export class WallSegment {
-    constructor(public x: number, public y: number, public length: number, public orientation: Orientation) {
+    constructor(public row: number, public column: number, public length: number, public orientation: Orientation) {
     }
 }   
 
 export class Maze {
     public cells: Cell[];
     private deadEndCells: Cell[]; 
+
     public wallSegments: WallSegment[];
 
     public startCell: Cell;
     public endCell: Cell;
 
-    public width: number;
-    public height: number;
+    public rows: number;
+    public columns: number;
+
     public scale: number;
 
-    public originX: number;
-    public originY: number;
-    public originZ: number;
-    
-    constructor(width: number, height: number, scale: number) {
+    constructor(rows: number, columns: number, scale: number) {
         this.cells = [];
         this.deadEndCells = [];
         this.wallSegments = [];
@@ -55,47 +54,70 @@ export class Maze {
         this.startCell = null;
         this.endCell = null;
 
-        this.width = width;
-        this.height = height;
+        this.rows = rows
+        this.columns = columns
         this.scale = scale;
-
-        this.originX = -this.scale / 2.0; 
-        this.originY = -1.3;
-        this.originZ = -this.scale / 2.0;
     }
 
+    get origin(): MRESDK.Vector3 {
+        var vector3 = new MRESDK.Vector3()
+
+        vector3.x = -this.scale * (0.5 + this.startCell.row)
+        vector3.y = -1.3
+        vector3.z = -this.scale * (0.5 + this.startCell.column)
+
+        return vector3
+    }
+
+    public setup() {
+        this.populateCells()
+        this.flipRowsDirection()
+
+        this.populateNeighbors()
+
+        this.findDeadEnds() 
+        this.setStartAndEnd()
+
+        this.populateWallSegments()
+    }
+    
     public populateCells() {
-        var tmpCells: Cell[] = [];
 
         ROT.RNG.setSeed(123)
 
-        var map = new ROT.Map.IceyMaze(this.width, this.height, 0);
+        var map = new ROT.Map.IceyMaze(this.columns, this.rows, 0);
 
-        var userCallback = (x: number, y: number, value: number) => {
-            const cell = new Cell(x, y, value);
-            tmpCells.push(cell)
+        var userCallback = (column: number, row: number, value: number) => {
+            const cell = new Cell(row, column, value);
+            this.cells.push(cell)
         }
         map.create(userCallback);
+    }
 
-        for (var y = this.height - 1; y >= 0; y = y - 1) {
-            for (var x = 0; x < this.width; x = x + 1) {
-                let cell = tmpCells.filter(cell => cell.x == x && cell.y == y)[0];
-                cell.y = (this.height - 1) - cell.y
-                this.cells.push(cell)
+    public flipRowsDirection() {
+        var tmpCells: Cell[] = [];
+
+        for (var row = this.rows - 1; row >= 0; row = row - 1) {
+            for (var column = 0; column < this.columns; column = column + 1) {
+                let cell = this.cells.filter(cell => cell.row == row && cell.column == column)[0];
+                cell.row = (this.rows - 1) - cell.row
+                tmpCells.push(cell)
             }
-        } 
+        }
+
+        this.cells = tmpCells;
     }
 
     public populateNeighbors() {
         for (var cell of this.cells) {
-            cell.topLeftCell = this.findCell(cell.x - 1, cell.y + 1)
-            cell.topCell = this.findCell(cell.x, cell.y + 1)
-            cell.topRightCell = this.findCell(cell.x + 1, cell.y + 1)
-            cell.leftCell = this.findCell(cell.x - 1, cell.y)
-            cell.rightCell = this.findCell(cell.x + 1, cell.y)
-            cell.bottomLeftCell = this.findCell(cell.x - 1, cell.y - 1)
-            cell.bottomCell = this.findCell(cell.x, cell.y - 1)
-            cell.bottomRightCell = this.findCell(cell.x + 1, cell.y - 1)
+            cell.topLeftCell = this.findCell(cell.row + 1, cell.column - 1)
+            cell.topCell = this.findCell(cell.row + 1, cell.column)
+            cell.topRightCell = this.findCell(cell.row + 1, cell.column + 1)
+            cell.leftCell = this.findCell(cell.row, cell.column - 1)
+            cell.rightCell = this.findCell(cell.row, cell.column + 1)
+            cell.bottomLeftCell = this.findCell(cell.row - 1, cell.column - 1)
+            cell.bottomCell = this.findCell(cell.row - 1, cell.column)
+            cell.bottomRightCell = this.findCell(cell.row - 1, cell.column + 1)
         }
     }
 
@@ -134,7 +156,7 @@ export class Maze {
         var longestDistance: number = 0; 
 
         for (let cell of this.deadEndCells) {
-            let distance = Utility.distance(this.startCell.x, this.startCell.y, cell.x, cell.y) 
+            let distance = Utility.distance(this.startCell.row, this.startCell.column, cell.row, cell.column) 
 
             if (distance > longestDistance) {
                 longestDistance = distance;
@@ -145,8 +167,6 @@ export class Maze {
     }
 
     public populateWallSegments() {
-        var a = this.cells;
-
         var wallCells = this.findCells(CellType.Wall)
 
         while (wallCells.length >= 1) {
@@ -160,24 +180,24 @@ export class Maze {
                     wallCells.splice(wallCells.indexOf(lastWall), 1);
                 }
 
-                wallSegment = new WallSegment(firstWall.x, firstWall.y, lastWall.x - firstWall.x + 1, Orientation.Horizontal)
+                wallSegment = new WallSegment(firstWall.row, firstWall.column, lastWall.column - firstWall.column + 1, Orientation.Horizontal)
             } else if (lastWall.topCell && lastWall.topCell.type == CellType.Wall && wallCells.includes(lastWall.topCell)) {
                 while (lastWall.topCell && lastWall.topCell.type == CellType.Wall && wallCells.includes(lastWall.topCell)) {
                     lastWall = lastWall.topCell
                     wallCells.splice(wallCells.indexOf(lastWall), 1);
                 }
 
-                wallSegment = new WallSegment(firstWall.x, firstWall.y, lastWall.y - firstWall.y + 1, Orientation.Vertical)
+                wallSegment = new WallSegment(firstWall.row, firstWall.column, lastWall.row - firstWall.row + 1, Orientation.Vertical)
             } else {
-                wallSegment = new WallSegment(firstWall.x, firstWall.y, 1, Orientation.Horizontal)
+                wallSegment = new WallSegment(firstWall.row, firstWall.column, 1, Orientation.Horizontal)
             }
 
             this.wallSegments.push(wallSegment)
         }
     }
 
-    public findCell(x: number, y: number): Cell {
-        return this.cells.filter(cell => cell.x == x && cell.y == y)[0]
+    public findCell(row: number, column: number): Cell {
+        return this.cells.filter(cell => cell.row == row && cell.column == column)[0]
     } 
 
     public findCells(type: CellType): Cell[] {

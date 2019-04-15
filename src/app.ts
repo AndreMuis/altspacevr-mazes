@@ -1,32 +1,25 @@
-import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
+import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
-import { Maze } from "./maze";
-import { MazeRenderer } from "./maze-renderer";
+import { Maze } from "./maze"
+import { MazeRenderer } from "./maze-renderer"
 
 export default class App {
     constructor(private context: MRESDK.Context, private baseUrl: string) {
-        this.context.onStarted(() => this.started());
+        this.context.onStarted(() => this.started())
     }
     
     public async started() {  
-        var maze = new Maze(31, 31, 3.0);
+        var maze = new Maze(5, 5, 3.0)
+        maze.setup()
 
-        maze.populateCells();
-        maze.populateNeighbors();
+        let renderer = new MazeRenderer(this.context, maze) 
+        renderer.draw()
+    
+        // renderer.drawAxes()
 
-        maze.findDeadEnds(); 
-        maze.setStartAndEnd();
+        //renderer.drawLayoutTests()
 
-        maze.populateWallSegments();
-
-        let renderer = new MazeRenderer(this.context, maze); 
-
-        renderer.drawLayoutTests();
-
-        //renderer.draw();
-        //renderer.drawTeleporter();
-
-        //renderer.drawToConsole();
+        //renderer.drawToConsole()
     }
 }
     
