@@ -1,7 +1,6 @@
-import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
-import * as ROT from 'rot-js';
+import * as ROT from 'rot-js'
 
-import { Utility } from "./utility";
+import { Utility } from "./utility"
 
 export enum CellType {
     Empty = 0,
@@ -33,40 +32,27 @@ export class WallSegment {
 }   
 
 export class Maze {
-    public cells: Cell[];
-    private deadEndCells: Cell[]; 
+    public cells: Cell[]
+    private deadEndCells: Cell[] 
 
-    public wallSegments: WallSegment[];
+    public wallSegments: WallSegment[]
 
-    public startCell: Cell;
-    public endCell: Cell;
+    public startCell: Cell
+    public endCell: Cell
 
-    public rows: number;
-    public columns: number;
+    public rows: number
+    public columns: number
 
-    public scale: number;
+    constructor(rows: number, columns: number) {
+        this.cells = []
+        this.deadEndCells = []
+        this.wallSegments = []
 
-    constructor(rows: number, columns: number, scale: number) {
-        this.cells = [];
-        this.deadEndCells = [];
-        this.wallSegments = [];
-
-        this.startCell = null;
-        this.endCell = null;
+        this.startCell = null
+        this.endCell = null
 
         this.rows = rows
         this.columns = columns
-        this.scale = scale;
-    }
-
-    get origin(): MRESDK.Vector3 {
-        var vector3 = new MRESDK.Vector3()
-
-        vector3.x = -this.scale * (0.5 + this.startCell.row)
-        vector3.y = -1.3
-        vector3.z = -this.scale * (0.5 + this.startCell.column)
-
-        return vector3
     }
 
     public setup() {
@@ -85,27 +71,27 @@ export class Maze {
 
         ROT.RNG.setSeed(123)
 
-        var map = new ROT.Map.IceyMaze(this.columns, this.rows, 0);
+        var map = new ROT.Map.IceyMaze(this.columns, this.rows, 0)
 
         var userCallback = (column: number, row: number, value: number) => {
-            const cell = new Cell(row, column, value);
+            const cell = new Cell(row, column, value)
             this.cells.push(cell)
         }
-        map.create(userCallback);
+        map.create(userCallback)
     }
 
     public flipRowsDirection() {
-        var tmpCells: Cell[] = [];
+        var tmpCells: Cell[] = []
 
         for (var row = this.rows - 1; row >= 0; row = row - 1) {
             for (var column = 0; column < this.columns; column = column + 1) {
-                let cell = this.cells.filter(cell => cell.row == row && cell.column == column)[0];
+                let cell = this.cells.filter(cell => cell.row == row && cell.column == column)[0]
                 cell.row = (this.rows - 1) - cell.row
                 tmpCells.push(cell)
             }
         }
 
-        this.cells = tmpCells;
+        this.cells = tmpCells
     }
 
     public populateNeighbors() {
@@ -128,41 +114,53 @@ export class Maze {
             surrondingWalls = 0
 
             if (cell.topCell && cell.topCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1;
+                surrondingWalls = surrondingWalls + 1
             }
 
             if (cell.leftCell && cell.leftCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1;
+                surrondingWalls = surrondingWalls + 1
             }
 
             if (cell.rightCell && cell.rightCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1;
+                surrondingWalls = surrondingWalls + 1
             }
 
             if (cell.bottomCell && cell.bottomCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1;
+                surrondingWalls = surrondingWalls + 1
             }
 
             if (surrondingWalls == 3) {
-                this.deadEndCells.push(cell);
+                this.deadEndCells.push(cell)
             }
+        }
+
+        if (this.deadEndCells.length == 0) {
+            throw new Error("No dead end cells found.")
         }
     }
 
     public setStartAndEnd() {
         let startCellIndex = Utility.randomNumber(0, this.deadEndCells.length - 1)
-        this.startCell = this.deadEndCells[startCellIndex];
+        this.startCell = this.deadEndCells[startCellIndex]
 
-        var longestDistance: number = 0; 
+        if (this.startCell == undefined) {
+            throw new Error("Start cell not found.")
+        }
+
+        var longestDistance: number = 0 
 
         for (let cell of this.deadEndCells) {
             let distance = Utility.distance(this.startCell.row, this.startCell.column, cell.row, cell.column) 
 
             if (distance > longestDistance) {
-                longestDistance = distance;
+                longestDistance = distance
 
-                this.endCell = cell;
+                this.endCell = cell
             }
+        }
+
+        if (this.endCell == undefined) {
+            throw new Error("End cell not found.")
         }
     }
 
@@ -177,14 +175,14 @@ export class Maze {
             if (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall && wallCells.includes(lastWall.rightCell)) {
                 while (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall && wallCells.includes(lastWall.rightCell)) {
                     lastWall = lastWall.rightCell
-                    wallCells.splice(wallCells.indexOf(lastWall), 1);
+                    wallCells.splice(wallCells.indexOf(lastWall), 1)
                 }
 
                 wallSegment = new WallSegment(firstWall.row, firstWall.column, lastWall.column - firstWall.column + 1, Orientation.Horizontal)
             } else if (lastWall.topCell && lastWall.topCell.type == CellType.Wall && wallCells.includes(lastWall.topCell)) {
                 while (lastWall.topCell && lastWall.topCell.type == CellType.Wall && wallCells.includes(lastWall.topCell)) {
                     lastWall = lastWall.topCell
-                    wallCells.splice(wallCells.indexOf(lastWall), 1);
+                    wallCells.splice(wallCells.indexOf(lastWall), 1)
                 }
 
                 wallSegment = new WallSegment(firstWall.row, firstWall.column, lastWall.row - firstWall.row + 1, Orientation.Vertical)
@@ -193,6 +191,10 @@ export class Maze {
             }
 
             this.wallSegments.push(wallSegment)
+        }
+
+        if (this.wallSegments.length == 0) {
+            throw new Error("No wall segments found.")
         }
     }
 

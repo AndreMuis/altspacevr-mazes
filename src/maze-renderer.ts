@@ -6,13 +6,25 @@ import { Utility } from "./utility"
 export class MazeRenderer {
     private context: MRESDK.Context
     private maze: Maze
+    private scale: number
     private artifactScale: {}
     private wallArtifactIds: string[]
 
-    constructor(context: MRESDK.Context, maze: Maze) {
+    get origin(): MRESDK.Vector3 {
+        var vector3 = new MRESDK.Vector3()
+    
+        vector3.x = -this.scale * (0.5 + this.maze.startCell.row)
+        vector3.y = -1.3
+        vector3.z = -this.scale * (0.5 + this.maze.startCell.column)
+
+        return vector3
+    }
+
+    constructor(context: MRESDK.Context, maze: Maze, scale: number) {
         this.context = context
         this.maze = maze
-        this.artifactScale = { x: maze.scale, y: maze.scale, z: maze.scale }
+        this.scale = scale
+        this.artifactScale = { x: scale, y: scale, z: scale }
         this.wallArtifactIds = [
             "1185746943125488002", 
             "1185746926700593527", 
@@ -32,9 +44,9 @@ export class MazeRenderer {
     }
 
     private drawFloor(position: MRESDK.Vector3, artifactScale: {}) {
-        let floorXOffset = this.maze.scale / 2.0
+        let floorXOffset = this.scale / 2.0
         let floorYOffset = 0.0
-        let floorZOffset = this.maze.scale / 2.0
+        let floorZOffset = this.scale / 2.0
 
         let resourceId: string
 
@@ -61,9 +73,9 @@ export class MazeRenderer {
     }
 
     private drawCeiling(position: MRESDK.Vector3, artifactScale: {}) {
-        var ceilingXOffset = this.maze.scale / 2.0
-        var ceilingYOffset = this.maze.scale
-        var ceilingZOffset = this.maze.scale / 2.0
+        var ceilingXOffset = this.scale / 2.0
+        var ceilingYOffset = this.scale
+        var ceilingZOffset = this.scale / 2.0
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: "artifact:1171073388207145585",
@@ -83,6 +95,13 @@ export class MazeRenderer {
 
     private drawWalls() {
         for (let wallSegment of this.maze.wallSegments) {
+            let wallArtifactIdIndex = wallSegment.length - 1
+            let wallArtifactId = this.wallArtifactIds[wallArtifactIdIndex]
+
+            if (wallArtifactId == undefined) {
+                throw new Error("Wall artifact id not found at index = " + wallArtifactIdIndex)
+            }
+
             let resourceId = "artifact: " + this.wallArtifactIds[wallSegment.length - 1]
             let position = this.getPosition(wallSegment.row, wallSegment.column)
 
@@ -94,7 +113,7 @@ export class MazeRenderer {
                     break;
             
                 case Orientation.Vertical:
-                    position.x = position.x + this.maze.scale
+                    position.x = position.x + this.scale
                     rotationAngle = -90
                     break;
             }
@@ -120,9 +139,9 @@ export class MazeRenderer {
             actor: {
                 transform: {
                     position: { 
-                        x: position.x + this.maze.scale / 2.0, 
+                        x: position.x + this.scale / 2.0, 
                         y: position.y, 
-                        z: position.z + this.maze.scale / 2.0
+                        z: position.z + this.scale / 2.0
                     }
                 }
             }
@@ -130,9 +149,9 @@ export class MazeRenderer {
     }
 
     private getPosition(row: number, column: number): MRESDK.Vector3 {
-        let x = this.maze.origin.x + this.maze.scale * column
-        let y = this.maze.origin.y
-        let z = this.maze.origin.z + this.maze.scale * row 
+        let x = this.origin.x + this.scale * column
+        let y = this.origin.y
+        let z = this.origin.z + this.scale * row 
 
         return new MRESDK.Vector3(x, y, z)
     }
@@ -140,7 +159,7 @@ export class MazeRenderer {
     public async drawLayoutTests() {
         this.drawAxes()
 
-        this.drawUnitCube()
+        // this.drawUnitCube()
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: "artifact:1185728423587218204",
