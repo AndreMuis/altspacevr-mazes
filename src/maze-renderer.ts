@@ -26,12 +26,35 @@ export class MazeRenderer {
         this.scale = scale
         this.artifactScale = { x: scale, y: scale, z: scale }
         this.wallArtifactIds = [
-            "1185746943125488002", 
-            "1185746926700593527", 
-            "1185746937740001665", 
-            "1185746932371292537", 
-            "1185746954122953094", 
-            "1185746949190451588"]
+            "1187133602853290886",
+            "1187133531910833013",
+            "1187133592577246083",
+            "1187133657907725201",
+            "1187133643378656142",
+            "1187133618758091657",
+            "1187133537808024438",
+            "1187133563628159868",
+            "1187133624068080522",
+            "1187133548151178104",
+            "1187133597929177989",
+            "1187133614052082568",
+            "1187133648529261455",
+            "1187133629067690891",
+            "1187133662966055826",
+            "1187133633824031628",
+            "1187133558527886203",
+            "1187133608985363335",
+            "1187133542908298103",
+            "1187133638462931853",
+            "1187133527162880884",
+            "1187133587737019266",
+            "1187133568669713277",
+            "1187133578224337791",
+            "1187133573501551486",
+            "1187133553645716346",
+            "1187133653109441424",
+            "1187133582896792448",
+            "1187133668099883923"]
     }
 
     public draw() {
@@ -60,13 +83,15 @@ export class MazeRenderer {
             resourceId: resourceId,
             actor: {
                 transform: {
-                    position: { 
-                        x: position.x + floorXOffset, 
-                        y: position.y + floorYOffset, 
-                        z: position.z + floorZOffset 
-                    },
-                    rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
-                    scale: artifactScale
+                    local: {
+                        position: { 
+                            x: position.x + floorXOffset, 
+                            y: position.y + floorYOffset, 
+                            z: position.z + floorZOffset 
+                        },
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
+                        scale: artifactScale
+                    }
                 }
             }
         })
@@ -81,13 +106,15 @@ export class MazeRenderer {
             resourceId: "artifact:1171073388207145585",
             actor: {
                 transform: {
-                    position: { 
-                        x: position.x + ceilingXOffset, 
-                        y: position.y + ceilingYOffset, 
-                        z: position.z + ceilingZOffset 
-                    },
-                    rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
-                    scale: artifactScale
+                    local: {
+                        position: { 
+                            x: position.x + ceilingXOffset, 
+                            y: position.y + ceilingYOffset, 
+                            z: position.z + ceilingZOffset 
+                        },
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
+                        scale: artifactScale
+                    }
                 }
             }
         })
@@ -122,9 +149,11 @@ export class MazeRenderer {
                 resourceId: resourceId,
                 actor: {
                     transform: {
-                        position: position,
-                        scale: this.artifactScale,
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), rotationAngle * MRESDK.DegreesToRadians),
+                        local: {
+                            position: position,
+                            scale: this.artifactScale,
+                            rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), rotationAngle * MRESDK.DegreesToRadians),
+                        }
                     }
                 }
             })
@@ -138,10 +167,12 @@ export class MazeRenderer {
             resourceId: "teleporter:1101096999417021156",
             actor: {
                 transform: {
-                    position: { 
-                        x: position.x + this.scale / 2.0, 
-                        y: position.y, 
-                        z: position.z + this.scale / 2.0
+                    local: {
+                        position: { 
+                            x: position.x + this.scale / 2.0, 
+                            y: position.y, 
+                            z: position.z + this.scale / 2.0
+                        }
                     }
                 }
             }
@@ -165,12 +196,14 @@ export class MazeRenderer {
             resourceId: "artifact:1185728423587218204",
             actor: {
                 transform: {
-                    position: { 
-                        x: 1.0, 
-                        y: 0.0, 
-                        z: 0.0
-                    },
-                    rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), -90 * MRESDK.DegreesToRadians),
+                    local: {
+                        position: { 
+                            x: 1.0, 
+                            y: 0.0, 
+                            z: 0.0
+                        },
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), -90 * MRESDK.DegreesToRadians),
+                    }
                 }
             }
         })
@@ -191,7 +224,9 @@ export class MazeRenderer {
             actor: {
                 appearance: { materialId: redMaterial.id },
                 transform: {
-                    position: { x: 0.5, y: 0, z: 0 }
+                    local: {
+                        position: { x: 0.5, y: 0, z: 0 }
+                    }
                 }
             }
         })
@@ -210,7 +245,9 @@ export class MazeRenderer {
             actor: {
                 appearance: { materialId: greenMaterial.id },
                 transform: {
-                    position: { x: 0, y: 0.5, z: 0 }
+                    local: {
+                        position: { x: 0, y: 0.5, z: 0 }
+                    }
                 }
             }
         })
@@ -229,7 +266,9 @@ export class MazeRenderer {
             actor: {
                 appearance: { materialId: blueMaterial.id },
                 transform: {
-                    position: { x: 0, y: 0.0, z: 0.5 }
+                    local: {
+                        position: { x: 0, y: 0.0, z: 0.5 }
+                    }
                 }
             }
         })
@@ -243,7 +282,9 @@ export class MazeRenderer {
             },
             actor: {
                 transform: {
-                    position: { x: 0, y: 0, z: 0 }
+                    local: {
+                        position: { x: 0, y: 0, z: 0 }
+                    }
                 }
             }
         })
