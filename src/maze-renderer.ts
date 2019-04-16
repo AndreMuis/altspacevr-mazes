@@ -98,7 +98,7 @@ export class MazeRenderer {
             let wallArtifactIdIndex = wallSegment.length - 1
             let wallArtifactId = this.wallArtifactIds[wallArtifactIdIndex]
 
-            if (wallArtifactId == undefined) {
+            if (!wallArtifactId) {
                 throw new Error("Wall artifact id not found at index = " + wallArtifactIdIndex)
             }
 

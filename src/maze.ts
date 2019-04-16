@@ -32,7 +32,7 @@ export class WallSegment {
 }   
 
 export class Maze {
-    public cells: Cell[]
+    private cells: Cell[]
     private deadEndCells: Cell[] 
 
     public wallSegments: WallSegment[]
@@ -143,7 +143,7 @@ export class Maze {
         let startCellIndex = Utility.randomNumber(0, this.deadEndCells.length - 1)
         this.startCell = this.deadEndCells[startCellIndex]
 
-        if (this.startCell == undefined) {
+        if (!this.startCell) {
             throw new Error("Start cell not found.")
         }
 
@@ -159,7 +159,7 @@ export class Maze {
             }
         }
 
-        if (this.endCell == undefined) {
+        if (!this.endCell) {
             throw new Error("End cell not found.")
         }
     }
