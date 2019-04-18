@@ -9,15 +9,15 @@ export default class App {
     }
     
     public async started() {  
-        var maze = new Maze(49, 49)
+        var maze = new Maze(39, 39)
         maze.setup()
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 
-        renderer.draw()
+        //renderer.draw()
     
         //renderer.drawAxes()
 
-        //renderer.drawLayoutTests()
+        renderer.drawLayoutTests()
 
         //renderer.drawToConsole()
     }

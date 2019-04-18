@@ -213,7 +213,7 @@ export class MazeRenderer {
         // this.drawUnitCube()
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:1185728423587218204",
+            resourceId: "artifact:1188612946876433250",
             actor: {
                 transform: {
                     local: {
