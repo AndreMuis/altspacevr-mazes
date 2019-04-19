@@ -168,7 +168,7 @@ export class MazeRenderer {
                 }
             })
 
-            await this.delay(0.01)
+            await this.delay(0.1)
         }
     }
 
