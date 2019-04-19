@@ -6,5 +6,11 @@ export class Utility {
     static randomNumber(a: number, b: number) {
         return Math.floor(Math.random() * (b - a + 1)) + a
     }
+
+    static delay(milliseconds: number): Promise<void> {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => resolve(), milliseconds);
+        });
+    }
 }
 

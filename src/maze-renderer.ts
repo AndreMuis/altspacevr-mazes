@@ -10,6 +10,8 @@ export class MazeRenderer {
     private artifactScale: {}
     private wallArtifactIds: string[]
 
+    static readonly floorArtifactId = "1189237114617725363"
+    
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
     
@@ -68,26 +70,18 @@ export class MazeRenderer {
     }
 
     public draw() {
-        //this.drawFloor(position, artifactScale)
+        this.drawFloor()
         //this.drawCeiling(position, artifactScale)
 
         this.drawWalls()
 
-        this.drawTeleporter()
+        //this.drawTeleporter()
     }
 
-    private drawFloor(position: MRESDK.Vector3, artifactScale: {}) {
-        let floorXOffset = this.scale / 2.0
-        let floorYOffset = 0.0
-        let floorZOffset = this.scale / 2.0
-
-        let resourceId: string
-
-        if (Utility.randomNumber(1, 10) <= 9) {
-            resourceId = "artifact:1171073392846045810"
-        } else {
-            resourceId = "artifact:1171073392846045810"
-        }
+    private drawFloor() {
+        let resourceId = "artifact: " + MazeRenderer.floorArtifactId
+        let position = this.getPosition(0, 0)
+        let scale = {x: this.scale * 39.0, y: this.scale * 39.0, z: 1.0}
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
@@ -95,12 +89,12 @@ export class MazeRenderer {
                 transform: {
                     local: {
                         position: { 
-                            x: position.x + floorXOffset, 
-                            y: position.y + floorYOffset, 
-                            z: position.z + floorZOffset 
+                            x: position.x + scale.x / 2.0, 
+                            y: position.y + 0.1, 
+                            z: position.z + scale.y / 2.0
                         },
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
-                        scale: artifactScale
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
+                        scale
                     }
                 }
             }
@@ -168,14 +162,8 @@ export class MazeRenderer {
                 }
             })
 
-            await this.delay(10)
+            await Utility.delay(10)
         }
-    }
-
-    private delay(milliseconds: number): Promise<void> {
-        return new Promise<void>((resolve) => {
-            setTimeout(() => resolve(), milliseconds);
-        });
     }
 
     public drawTeleporter() {
@@ -211,16 +199,17 @@ export class MazeRenderer {
         // this.drawUnitCube()
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:1188624542197613376",
+            resourceId: "artifact:" + MazeRenderer.floorArtifactId,
             actor: {
                 transform: {
                     local: {
                         position: { 
                             x: 1.0, 
                             y: 0.0, 
-                            z: 0.0
+                            z: 1.0
                         },
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), -90 * MRESDK.DegreesToRadians),
+                        scale: {x: 2.0, y: 2.0, z: 1.0},
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
                     }
                 }
             }
