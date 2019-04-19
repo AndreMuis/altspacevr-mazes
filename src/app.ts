@@ -9,7 +9,7 @@ export default class App {
     }
     
     public async started() {  
-        var maze = new Maze(39, 39)
+        var maze = new Maze(9, 9)
         maze.setup()
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 
