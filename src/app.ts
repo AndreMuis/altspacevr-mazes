@@ -13,11 +13,11 @@ export default class App {
         maze.setup()
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 
-        //renderer.draw()
+        renderer.draw()
     
         //renderer.drawAxes()
 
-        renderer.drawLayoutTests()
+        //renderer.drawLayoutTests()
 
         //renderer.drawToConsole()
     }
