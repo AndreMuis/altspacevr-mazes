@@ -2,15 +2,16 @@ import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
 import { Cell, CellType, Maze, WallSegment, Orientation } from "./maze"
 import { Utility } from "./utility"
+import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
 export class MazeRenderer {
     private context: MRESDK.Context
     private maze: Maze
     private scale: number
-    private artifactScale: {}
-    private wallArtifactIds: string[]
 
-    static readonly floorArtifactId = "1189237114617725363"
+    private wallArtifactIds: string[]
+    static readonly floorArtifactId = "1189349129252242110"
+    static readonly ceilingArtifactId = "1189327610803389244"
     
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
@@ -26,7 +27,6 @@ export class MazeRenderer {
         this.context = context
         this.maze = maze
         this.scale = scale
-        this.artifactScale = { x: scale, y: scale, z: scale }
         this.wallArtifactIds = [
             "1188788462526923420", 
             "1188788467887243933", 
@@ -71,53 +71,53 @@ export class MazeRenderer {
 
     public draw() {
         this.drawFloor()
-        //this.drawCeiling(position, artifactScale)
+        this.drawCeiling()
 
         this.drawWalls()
 
-        //this.drawTeleporter()
+        this.drawTeleporter()
     }
 
     private drawFloor() {
         let resourceId = "artifact: " + MazeRenderer.floorArtifactId
+        let scale = {x: this.scale * this.maze.columns, y: this.scale * this.maze.rows, z: 1.0}
+
         let position = this.getPosition(0, 0)
-        let scale = {x: this.scale * 39.0, y: this.scale * 39.0, z: 1.0}
+        position = new Vector3(position.x + scale.x / 2.0, position.y, position.z + scale.y / 2.0)
+
+        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
             actor: {
                 transform: {
                     local: {
-                        position: { 
-                            x: position.x + scale.x / 2.0, 
-                            y: position.y + 0.1, 
-                            z: position.z + scale.y / 2.0
-                        },
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
-                        scale
+                        position: position,
+                        rotation: rotation,
+                        scale: scale
                     }
                 }
             }
         })
     }
 
-    private drawCeiling(position: MRESDK.Vector3, artifactScale: {}) {
-        var ceilingXOffset = this.scale / 2.0
-        var ceilingYOffset = this.scale
-        var ceilingZOffset = this.scale / 2.0
+    private drawCeiling() {
+        let resourceId = "artifact: " + MazeRenderer.ceilingArtifactId
+        let scale = {x: this.scale * this.maze.columns, y: this.scale * this.maze.rows, z: 1.0}
+
+        let position = this.getPosition(0, 0)
+        position = new Vector3(position.x + scale.x / 2.0, position.y + this.scale, position.z + scale.y / 2.0)
+
+        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:1171073388207145585",
+            resourceId: resourceId,
             actor: {
                 transform: {
                     local: {
-                        position: { 
-                            x: position.x + ceilingXOffset, 
-                            y: position.y + ceilingYOffset, 
-                            z: position.z + ceilingZOffset 
-                        },
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
-                        scale: artifactScale
+                        position: position,
+                        rotation: rotation,
+                        scale: scale
                     }
                 }
             }
@@ -135,6 +135,7 @@ export class MazeRenderer {
 
             let resourceId = "artifact: " + this.wallArtifactIds[wallSegment.length - 1]
             let position = this.getPosition(wallSegment.row, wallSegment.column)
+            let scale = {x: this.scale, y: this.scale, z: this.scale }
 
             var rotationAngle: number
 
@@ -149,14 +150,16 @@ export class MazeRenderer {
                     break;
             }
 
+            let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), rotationAngle * MRESDK.DegreesToRadians)
+
             MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: resourceId,
                 actor: {
                     transform: {
                         local: {
                             position: position,
-                            scale: this.artifactScale,
-                            rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), rotationAngle * MRESDK.DegreesToRadians),
+                            scale: scale,
+                            rotation: rotation,
                         }
                     }
                 }
