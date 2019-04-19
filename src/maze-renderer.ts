@@ -10,14 +10,14 @@ export class MazeRenderer {
     private scale: number
 
     private wallArtifactIds: string[]
-    static readonly floorArtifactId = "1189349129252242110"
-    static readonly ceilingArtifactId = "1189327610803389244"
+    static readonly floorArtifactId = "1189362288939762020"
+    static readonly ceilingArtifactId = "1189362283956928866"
     
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
     
         vector3.x = -this.scale * (0.5 + this.maze.startCell.row)
-        vector3.y = -1.3
+        vector3.y = -1.35
         vector3.z = -this.scale * (0.5 + this.maze.startCell.column)
 
         return vector3
