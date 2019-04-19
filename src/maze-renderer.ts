@@ -130,7 +130,7 @@ export class MazeRenderer {
         })
     }
 
-    private drawWalls() {
+    private async drawWalls() {
         for (let wallSegment of this.maze.wallSegments) {
             let wallArtifactIdIndex = wallSegment.length - 1
             let wallArtifactId = this.wallArtifactIds[wallArtifactIdIndex]
@@ -155,7 +155,7 @@ export class MazeRenderer {
                     break;
             }
 
-            MRESDK.Actor.CreateFromLibrary(this.context, {
+            await MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: resourceId,
                 actor: {
                     transform: {
