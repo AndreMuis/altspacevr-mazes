@@ -68,9 +68,6 @@ export class Maze {
     }
     
     public populateCells() {
-
-        ROT.RNG.setSeed(123)
-
         var map = new ROT.Map.IceyMaze(this.columns, this.rows, 0)
 
         var userCallback = (column: number, row: number, value: number) => {
