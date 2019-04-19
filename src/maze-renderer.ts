@@ -155,7 +155,7 @@ export class MazeRenderer {
                     break;
             }
 
-            await MRESDK.Actor.CreateFromLibrary(this.context, {
+            MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: resourceId,
                 actor: {
                     transform: {
@@ -167,7 +167,15 @@ export class MazeRenderer {
                     }
                 }
             })
+
+            await this.delay(0.01)
         }
+    }
+
+    private delay(milliseconds: number): Promise<void> {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => resolve(), milliseconds);
+        });
     }
 
     public drawTeleporter() {
