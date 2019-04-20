@@ -16,9 +16,9 @@ export class MazeRenderer {
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
     
-        vector3.x = -this.scale * (0.5 + this.maze.startCell.row)
+        vector3.x = -this.scale * (0.5 + this.maze.startCell.column)
         vector3.y = -1.35
-        vector3.z = -this.scale * (0.5 + this.maze.startCell.column)
+        vector3.z = -this.scale * (0.5 + this.maze.startCell.row)
 
         return vector3
     }
