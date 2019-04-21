@@ -19,7 +19,7 @@ export default class App {
 
         //renderer.drawLayoutTests()
 
-        renderer.drawToConsole()
+        //renderer.drawToConsole()
     }
 }
     
