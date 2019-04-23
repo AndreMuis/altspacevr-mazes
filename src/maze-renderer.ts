@@ -305,7 +305,7 @@ export class MazeRenderer {
             var line = ""
 
             for (var column = 0; column < this.maze.columns; column = column + 1) {
-                let cell = this.maze.findCell(row, column)
+                let cell = Maze.findCell(this.maze.cells, row, column)
 
                 if (cell == this.maze.startCell) {
                     line = line + "S"
