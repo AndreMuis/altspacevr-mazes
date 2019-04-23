@@ -12,16 +12,18 @@ export enum Orientation {
     Vertical = 1
 }
 
-export class Cell {
-    public topLeftCell: Cell
-    public topCell: Cell
-    public topRightCell: Cell
-    public leftCell: Cell
-    public rightCell: Cell
-    public bottomLeftCell: Cell
-    public bottomCell: Cell
-    public bottomRightCell: Cell
+export enum Direction {
+    TopLeft,
+    Top,
+    TopRight,
+    Left,
+    Right,
+    BottomLeft,
+    Bottom,
+    BottomRight
+}
 
+export class Cell {
     constructor(public row: number, public column: number, public type: CellType) {
     }
 }   
@@ -59,8 +61,6 @@ export class Maze {
         this.populateCells()
         this.flipRowsDirection()
 
-        this.populateNeighbors()
-
         this.findDeadEnds() 
         this.setStartAndEnd()
 
@@ -91,42 +91,23 @@ export class Maze {
         this.cells = tmpCells
     }
 
-    public populateNeighbors() {
-        for (var cell of this.cells) {
-            cell.topLeftCell = this.findCell(cell.row + 1, cell.column - 1)
-            cell.topCell = this.findCell(cell.row + 1, cell.column)
-            cell.topRightCell = this.findCell(cell.row + 1, cell.column + 1)
-            cell.leftCell = this.findCell(cell.row, cell.column - 1)
-            cell.rightCell = this.findCell(cell.row, cell.column + 1)
-            cell.bottomLeftCell = this.findCell(cell.row - 1, cell.column - 1)
-            cell.bottomCell = this.findCell(cell.row - 1, cell.column)
-            cell.bottomRightCell = this.findCell(cell.row - 1, cell.column + 1)
-        }
-    }
-
     public findDeadEnds() {
-        var surrondingWalls: number
-
         for (let cell of this.findCells(CellType.Empty)) {
-            surrondingWalls = 0
+            var surrondingWallCount = 0
 
-            if (cell.topCell && cell.topCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1
-            }
+            let surrondingWalls: Cell[] = [
+                this.findCell2(cell, Direction.Top),
+                this.findCell2(cell, Direction.Left),
+                this.findCell2(cell, Direction.Right),
+                this.findCell2(cell, Direction.Bottom)]
 
-            if (cell.leftCell && cell.leftCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1
-            }
+            surrondingWalls.forEach(function (cell) {
+                if (cell && cell.type == CellType.Wall) {
+                    surrondingWallCount = surrondingWallCount + 1
+                }
+            });
 
-            if (cell.rightCell && cell.rightCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1
-            }
-
-            if (cell.bottomCell && cell.bottomCell.type == CellType.Wall) {
-                surrondingWalls = surrondingWalls + 1
-            }
-
-            if (surrondingWalls == 3) {
+            if (surrondingWallCount == 3) {
                 this.deadEndCells.push(cell)
             }
         }
@@ -165,14 +146,16 @@ export class Maze {
         var wallCells = this.findCells(CellType.Wall)
 
         while (wallCells.length >= 1) {
-            let firstWall = wallCells.shift()
-            var lastWall = firstWall
+            let firstWallCell = wallCells.shift()
+            var lastCell = firstWallCell
             var wallSegment: WallSegment
 
-            if (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall && wallCells.includes(lastWall.rightCell)) {
-                while (lastWall.rightCell && lastWall.rightCell.type == CellType.Wall && wallCells.includes(lastWall.rightCell)) {
-                    lastWall = lastWall.rightCell
-                    wallCells.splice(wallCells.indexOf(lastWall), 1)
+            var rightCell = this.findCell2(lastCell, Direction.Right)
+
+            if (rightCell && rightCell.type == CellType.Wall && wallCells.includes(rightCell)) {
+                while (rightCell && rightCell.type == CellType.Wall && wallCells.includes(rightCell)) {
+                    lastCell = this.findCell(lastCell.row, lastCell.column + 1)
+                    wallCells.splice(wallCells.indexOf(lastCell), 1)
                 }
 
                 wallSegment = new WallSegment(firstWall.row, firstWall.column, lastWall.column - firstWall.column + 1, Orientation.Horizontal)
@@ -198,6 +181,27 @@ export class Maze {
     public findCell(row: number, column: number): Cell {
         return this.cells.filter(cell => cell.row == row && cell.column == column)[0]
     } 
+
+    public findCell2(cell: Cell, direction: Direction) {
+        switch (direction) {
+            case Direction.TopLeft:
+                return this.findCell(cell.row + 1, cell.column - 1)
+            case Direction.Top:
+                return this.findCell(cell.row + 1, cell.column)
+            case Direction.TopRight:
+                return this.findCell(cell.row + 1, cell.column + 1)
+            case Direction.Left:
+                return this.findCell(cell.row, cell.column - 1)
+            case Direction.Right:
+                return this.findCell(cell.row, cell.column + 1)
+            case Direction.BottomLeft:
+                return this.findCell(cell.row - 1, cell.column - 1)
+            case Direction.Bottom:
+                return this.findCell(cell.row - 1, cell.column)
+            case Direction.BottomRight:
+                return this.findCell(cell.row - 1, cell.column + 1)
+        }
+    }
 
     public findCells(type: CellType): Cell[] {
         return this.cells.filter(cell => cell.type == type)
