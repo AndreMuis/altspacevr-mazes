@@ -172,7 +172,7 @@ export class MazeRenderer {
         }
     }
 
-    public drawStart() {
+    private drawStart() {
         let neighborCell = Maze.findCellAtDirection(this.maze.cells, this.maze.startCell, this.maze.startCell.openFaceDirection)
         var position = this.getPosition(neighborCell.row, neighborCell.column)
         position = new Vector3(position.x + this.scale / 2.0, position.y + 1.6, position.z + this.scale / 2.0)
@@ -197,7 +197,7 @@ export class MazeRenderer {
         })   
     }
 
-    public drawEnd() {
+    private drawEnd() {
         var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column) 
         position = new Vector3(position.x + this.scale / 2.0, position.y, position.z + this.scale / 2.0)
 

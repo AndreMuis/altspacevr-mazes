@@ -6,9 +6,11 @@ import { MazeRenderer } from "./maze-renderer"
 export default class App {
     constructor(private context: MRESDK.Context, private baseUrl: string) {
         this.context.onStarted(() => this.started())
-    }
     
-    public async started() {  
+        this.context.onUserJoined((user) => this.userJoined(user))
+    }
+
+    private started() {
         var maze = new Maze(5, 5)
         maze.setup()
 
@@ -20,6 +22,15 @@ export default class App {
         //renderer.drawLayoutTests()
 
         renderer.drawToConsole()
+    }
+    
+    private userJoined = (user: MRESDK.User) => {
+
+        console.log(user.name)
+
+        this.context.actors.forEach(actor => {
+            actor.destroy()
+        });
     }
 }
     
