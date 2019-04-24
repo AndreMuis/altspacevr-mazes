@@ -26,6 +26,14 @@ export enum Direction {
 export class Cell {
     constructor(public row: number, public column: number, public type: CellType) {
     }
+
+    public equals(cell: Cell): boolean {
+        if (this.row == cell.row && this.column == cell.column && this.type == cell.type) {
+            return true
+        } else {
+            return false
+        }
+    }
 }   
 
 export class DeadEndCell extends Cell {
@@ -49,8 +57,8 @@ export class Maze {
 
     public wallSegments: WallSegment[]
 
-    public startCell: Cell
-    public endCell: Cell
+    public startCell: DeadEndCell
+    public endCell: DeadEndCell
 
     public rows: number
     public columns: number
@@ -102,30 +110,32 @@ export class Maze {
     }
 
     public findDeadEnds() {
+        var surrondingWallCount: number
+        var openFaceDirection: Direction
+
+        let directions: Direction[] = [
+            Direction.Top,
+            Direction.Left,
+            Direction.Right,
+            Direction.Bottom]
+
         for (let cell of Maze.findCells(this.cells, CellType.Empty)) {
-            var surrondingWallCount = 0
+            surrondingWallCount = 0
 
-            let directions: Direction[] = [
-                Direction.Top,
-                Direction.Left,
-                Direction.Right,
-                Direction.Bottom]
+            directions.forEach((direction) => {
+                var neighborCell = Maze.findCellAtDirection(this.cells, cell, direction)
 
-            directions.forEach((direction, index) => {
-                cell = Maze.findCellAtDirection(this.cells, cell, direction)
-
-                if (cell && cell.type == CellType.Wall) {
-                    surrondingWallCount = surrondingWallCount + 1
-                    directions.splice(index, 1)
+                if (neighborCell) {
+                    if (neighborCell.type == CellType.Wall) {
+                        surrondingWallCount = surrondingWallCount + 1
+                    } else {
+                        openFaceDirection = direction
+                    }
                 }
-            });
+            })
 
             if (surrondingWallCount == 3) {
-                if (directions.length != 1) {
-                    throw new Error("directions array does not have length 1. length = " + directions.length)
-                }
-        
-                let deadEndCell = new DeadEndCell(cell, directions[0])
+                let deadEndCell = new DeadEndCell(cell, openFaceDirection)
                 this.deadEndCells.push(deadEndCell)
             }
         }

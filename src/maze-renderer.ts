@@ -1,6 +1,6 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
-import { Cell, CellType, Maze, WallSegment, Orientation } from "./maze"
+import { Cell, CellType, Maze, WallSegment, Orientation, Direction } from "./maze"
 import { Utility } from "./utility"
 import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
@@ -10,8 +10,10 @@ export class MazeRenderer {
     private scale: number
 
     private wallArtifactIds: string[]
-    static readonly floorArtifactId = "1189362288939762020"
-    static readonly ceilingArtifactId = "1189362283956928866"
+    static readonly floorResourceId = "artifact: 1189362288939762020"
+    static readonly ceilingResourceId = "artifact: 1189362283956928866"
+
+    static readonly springCampfireResourceId = "teleporter:1148791394312127008"
     
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
@@ -75,11 +77,12 @@ export class MazeRenderer {
 
         this.drawWalls()
 
-        this.drawTeleporter()
+        this.drawStart()
+        this.drawEnd()
     }
 
     private drawFloor() {
-        let resourceId = "artifact: " + MazeRenderer.floorArtifactId
+        let resourceId = MazeRenderer.floorResourceId
         let scale = {x: this.scale * this.maze.columns, y: this.scale * this.maze.rows, z: 1.0}
 
         let position = this.getPosition(0, 0)
@@ -102,7 +105,7 @@ export class MazeRenderer {
     }
 
     private drawCeiling() {
-        let resourceId = "artifact: " + MazeRenderer.ceilingArtifactId
+        let resourceId = MazeRenderer.ceilingResourceId
         let scale = {x: this.scale * this.maze.columns, y: this.scale * this.maze.rows, z: 1.0}
 
         let position = this.getPosition(0, 0)
@@ -169,23 +172,71 @@ export class MazeRenderer {
         }
     }
 
-    public drawTeleporter() {
-        let position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column) 
+    public drawStart() {
+        let neighborCell = Maze.findCellAtDirection(this.maze.cells, this.maze.startCell, this.maze.startCell.openFaceDirection)
+        var position = this.getPosition(neighborCell.row, neighborCell.column)
+        position = new Vector3(position.x + this.scale / 2.0, position.y + 1.6, position.z + this.scale / 2.0)
 
-        MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "teleporter:1101096999417021156",
+        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(this.maze.startCell.openFaceDirection))
+
+        MRESDK.Actor.CreateEmpty(this.context, {
             actor: {
                 transform: {
                     local: {
-                        position: { 
-                            x: position.x + this.scale / 2.0, 
-                            y: position.y, 
-                            z: position.z + this.scale / 2.0
-                        }
+                        position: position,
+                        rotation: rotation
+                    }
+                },
+                text: {
+                    contents: "Try and find the exit!\n\nCreated by Andre Muis",
+                    anchor: MRESDK.TextAnchorLocation.MiddleCenter,
+                    color: { r: 255 / 255, g: 255 / 255, b: 255 / 255 },
+                    height: 0.23
+                }
+            }
+        })   
+    }
+
+    public drawEnd() {
+        var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column) 
+        position = new Vector3(position.x + this.scale / 2.0, position.y, position.z + this.scale / 2.0)
+
+        let scale = new Vector3(1.5, 1.5, 1.5)
+
+        MRESDK.Actor.CreateFromLibrary(this.context, {
+            resourceId: MazeRenderer.springCampfireResourceId,
+            actor: {
+                transform: {
+                    local: {
+                        position: position,
+                        scale: scale
                     }
                 }
             }
         })
+
+        var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column)
+        position = new Vector3(position.x + this.scale / 2.0, position.y + 2.2, position.z + this.scale / 2.0)
+
+        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(this.maze.startCell.openFaceDirection) + Math.PI)
+
+        MRESDK.Actor.CreateEmpty(this.context, {
+            actor: {
+                transform: {
+                    local: {
+                        position: position,
+                        rotation: rotation
+                    }
+                },
+                text: {
+                    contents: "Congratulations! You made it!\n\nBe sure to favorite this world.\n\nA new maze is created each day.",
+                    anchor: MRESDK.TextAnchorLocation.MiddleCenter,
+                    color: { r: 255 / 255, g: 255 / 255, b: 255 / 255 },
+                    height: 0.18
+                }
+            }
+        })   
+
     }
 
     private getPosition(row: number, column: number): MRESDK.Vector3 {
@@ -196,11 +247,50 @@ export class MazeRenderer {
         return new MRESDK.Vector3(x, y, z)
     }
 
+    private angleFromDirection(direction: Direction): number {
+        var angle: number
+        
+        switch (direction) {
+            case Direction.Top:
+                angle = 0
+                break
+            case Direction.Left:
+                angle = -90
+                break
+            case Direction.Bottom:
+                angle = -180
+                break
+            case Direction.Right:
+                angle = -270
+                break
+        }
+
+        return angle * MRESDK.DegreesToRadians
+    }
+
     public async drawLayoutTests() {
         this.drawAxes()
 
         // this.drawUnitCube()
 
+        MRESDK.Actor.CreateEmpty(this.context, {
+            actor: {
+                transform: {
+                    local: {
+                        position: { x: 0.5, y: 1, z: 0.5 },
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), -90 * MRESDK.DegreesToRadians),
+                    }
+                },
+                text: {
+                    contents: "Try and find the exit!\n\nCreated by Andre Muis",
+                    anchor: MRESDK.TextAnchorLocation.MiddleCenter,
+                    color: { r: 255 / 255, g: 255 / 255, b: 255 / 255 },
+                    height: 0.1
+                }
+            }
+        })
+
+        /*
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: "artifact:" + MazeRenderer.floorArtifactId,
             actor: {
@@ -217,6 +307,7 @@ export class MazeRenderer {
                 }
             }
         })
+        */
     }
 
     public async drawAxes() {
@@ -307,9 +398,9 @@ export class MazeRenderer {
             for (var column = 0; column < this.maze.columns; column = column + 1) {
                 let cell = Maze.findCell(this.maze.cells, row, column)
 
-                if (cell == this.maze.startCell) {
+                if (cell.equals(this.maze.startCell)) {
                     line = line + "S"
-                } else if (cell == this.maze.endCell) {
+                } else if (cell.equals(this.maze.endCell)) {
                     line = line + "E"
                 } else if (cell.type == CellType.Wall) {
                     line = line + "W"
