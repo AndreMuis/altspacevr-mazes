@@ -53,7 +53,7 @@ export class WallSegment {
 
 export class Maze {
     public cells: Cell[]
-    private deadEndCells: DeadEndCell[] 
+    public deadEndCells: DeadEndCell[] 
 
     public wallSegments: WallSegment[]
 
@@ -254,9 +254,20 @@ export class Maze {
         var cells: Cell[] = []
         directions.forEach((direction) => {
             cell = Maze.findCellAtDirection(cells, cell, direction)
-            cells.push(cell)
+
+            if (cell) {
+                cells.push(cell)
+            }
         });
 
         return cells
+    }
+
+    public static removeNearestNeighborCells(cells: Cell[], cell: Cell) {
+        let neighborCells = Maze.findNearestNeighborCells(cells, cell)
+
+        neighborCells.forEach(neighborCell => {
+            cells.splice(cells.indexOf(neighborCell), 1)            
+        });
     }
 }
