@@ -64,6 +64,8 @@ export class Maze {
     public columns: number
 
     constructor(rows: number, columns: number) {
+        require('@microsoft/mixed-reality-extension-sdk/built/protocols/protocol').DefaultConnectionTimeoutSeconds = 0
+
         this.cells = []
         this.deadEndCells = []
         this.wallSegments = []
