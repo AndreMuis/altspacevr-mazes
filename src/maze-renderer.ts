@@ -11,6 +11,7 @@ export class MazeRenderer {
 
     private wallArtifactIds: string[]
 
+    static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.0001
 
     static readonly floorResourceId = "artifact: 1189362288939762020"
@@ -29,7 +30,7 @@ export class MazeRenderer {
         var vector3 = new MRESDK.Vector3()
     
         vector3.x = -this.scale * (0.5 + this.maze.startCell.column)
-        vector3.y = -1.35
+        vector3.y = -1.3
         vector3.z = -this.scale * (0.5 + this.maze.startCell.row)
 
         return vector3
@@ -95,7 +96,7 @@ export class MazeRenderer {
     private drawFloor() {
         // floor
         let resourceId = MazeRenderer.floorResourceId
-        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, 1.0)
+        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, 0, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
 
@@ -128,7 +129,7 @@ export class MazeRenderer {
 
             position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
             rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
-            scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
+            scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
 
             MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: MazeRenderer.floorGrateResourceId,
@@ -151,7 +152,7 @@ export class MazeRenderer {
     private drawCeiling() {
         // ceiling
         let resourceId = MazeRenderer.ceilingResourceId
-        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, 1.0)
+        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
 
@@ -178,7 +179,7 @@ export class MazeRenderer {
 
             position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, this.scale - MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
             rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
-            scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
+            scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
 
             MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: MazeRenderer.ceilingLightsResourceId,
@@ -239,8 +240,6 @@ export class MazeRenderer {
                     }
                 }
             })
-
-            //await Utility.delay(50)
         }
 
         // grates
@@ -275,7 +274,7 @@ export class MazeRenderer {
         // floor panel
         var position = this.getPosition(this.maze.startCell.row, this.maze.startCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
-        let scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
+        let scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: MazeRenderer.floorStartResourceId,
@@ -317,7 +316,7 @@ export class MazeRenderer {
         // floor panel
         var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
-        var scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
+        var scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: MazeRenderer.floorEndResourceId,

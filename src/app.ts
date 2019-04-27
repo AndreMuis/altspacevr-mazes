@@ -15,7 +15,7 @@ export default class App {
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 
         renderer.draw()
-        // renderer.drawToConsole()
+        //renderer.drawToConsole()
     
         //let sandbox = new Sandbox(this.context)
         //sandbox.draw()
