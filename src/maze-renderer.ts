@@ -199,7 +199,7 @@ export class MazeRenderer {
         }    
     }
 
-    private drawWalls() {
+    private async drawWalls() {
         // walls
         for (let wallSegment of this.maze.wallSegments) {
             let wallArtifactIdIndex = wallSegment.length - 1
