@@ -6,6 +6,8 @@ import { Sandbox } from "./sandbox"
 
 export default class App {
     constructor(private context: MRESDK.Context, private baseUrl: string) {
+        require('@microsoft/mixed-reality-extension-sdk/built/protocols/protocol').DefaultConnectionTimeoutSeconds = 0
+
         this.context.onStarted(() => this.started())
     }
 
