@@ -13,13 +13,13 @@ export class Sandbox {
         // this.drawUnitCube()
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact: 1189362288939762020",
+            resourceId: "artifact: 1193698962574410055",
             actor: {
                 transform: {
                     local: {
-                        position: new MRESDK.Vector3(1.0, 0.0, 1.0),
-                        scale: new MRESDK.Vector3(2.0, 2.0, 1.0),
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
+                        position: new MRESDK.Vector3(0.0, 0.0, 0.0),
+                        scale: new MRESDK.Vector3(1.0, 1.0, 1.0),
+                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians),
                     }
                 }
             }

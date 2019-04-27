@@ -2,7 +2,6 @@ import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
 import { Maze } from "./maze"
 import { MazeRenderer } from "./maze-renderer"
-
 import { Sandbox } from "./sandbox"
 
 export default class App {
@@ -11,15 +10,15 @@ export default class App {
     }
 
     private started() {
-        var maze = new Maze(5, 5)
+        var maze = new Maze(39, 39)
         maze.setup()
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 
         renderer.draw()
         // renderer.drawToConsole()
     
-        // let sandbox = new Sandbox(this.context)
-        // sandbox.draw()
+        //let sandbox = new Sandbox(this.context)
+        //sandbox.draw()
     }
 }
     

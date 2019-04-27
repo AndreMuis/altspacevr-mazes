@@ -251,16 +251,16 @@ export class Maze {
             Direction.Bottom,
             Direction.BottomRight]
 
-        var cells: Cell[] = []
+        var neighborCells: Cell[] = []
         directions.forEach((direction) => {
-            cell = Maze.findCellAtDirection(cells, cell, direction)
+            var neighborCell = Maze.findCellAtDirection(cells, cell, direction)
 
-            if (cell) {
-                cells.push(cell)
+            if (neighborCell) {
+                neighborCells.push(neighborCell)
             }
         });
 
-        return cells
+        return neighborCells
     }
 
     public static removeNearestNeighborCells(cells: Cell[], cell: Cell) {

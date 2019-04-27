@@ -2,6 +2,7 @@ import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
 import { Cell, CellType, Maze, WallSegment, Orientation, Direction } from "./maze"
 import { Utility } from "./utility"
+import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
 export class MazeRenderer {
     private context: MRESDK.Context
@@ -10,15 +11,17 @@ export class MazeRenderer {
 
     private wallArtifactIds: string[]
 
-    static readonly floorResourceId = "artifact: 1189362288939762020"
-    static readonly floorStartResourceId = "artifact: "
-    static readonly floorEndResourceId = "artifact: "
-    static readonly floorGrateResourceId = "artifact: "
+    static readonly minInterPlanarDistance = 0.0001
 
-    static readonly wallGrateResourceId = "artifact: "
+    static readonly floorResourceId = "artifact: 1189362288939762020"
+    static readonly floorStartResourceId = "artifact: 1193698949010030914"
+    static readonly floorEndResourceId = "artifact: 1193698953447604547"
+    static readonly floorGrateResourceId = "artifact: 1193698970409369928"
+
+    static readonly wallGrateResourceId = "artifact: 1193698962574410055"
 
     static readonly ceilingResourceId = "artifact: 1189362283956928866"
-    static readonly ceilingLightsResourceId = "artifact: "
+    static readonly ceilingLightsResourceId = "artifact: 1193698957834846532"
 
     static readonly springCampfireResourceId = "teleporter: 1148791394312127008"
     
@@ -92,7 +95,7 @@ export class MazeRenderer {
     private drawFloor() {
         // floor
         let resourceId = MazeRenderer.floorResourceId
-        let scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, 1.0)
+        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, 1.0)
         var position = this.getPosition(0, 0, scale.x / 2.0, 0, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
 
@@ -117,22 +120,24 @@ export class MazeRenderer {
             Maze.removeNearestNeighborCells(emptyCells, deadEndCell)
         });
 
-        let grateCount = emptyCells.length / 10
+        let grateCount = emptyCells.length / 20
 
         for (var count = 1; count <= grateCount; count = count + 1) {
             var randomIndex = Utility.randomNumber(0, emptyCells.length - 1)
             var emptyCell = emptyCells[randomIndex]
 
-            position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
-            rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
-    
+            position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+            rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+            scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
+
             MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: MazeRenderer.floorGrateResourceId,
                 actor: {
                     transform: {
                         local: {
                             position: position,
-                            rotation: rotation
+                            rotation: rotation,
+                            scale: scale
                         }
                     }
                 }
@@ -146,9 +151,9 @@ export class MazeRenderer {
     private drawCeiling() {
         // ceiling
         let resourceId = MazeRenderer.ceilingResourceId
-        let scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, 1.0)
-        let position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
-        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, 1.0)
+        var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
@@ -165,22 +170,24 @@ export class MazeRenderer {
 
         // lights
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
-        let lightCount = emptyCells.length / 10
+        let lightCount = emptyCells.length / 20
 
         for (var count = 1; count <= lightCount; count = count + 1) {
             var randomIndex = Utility.randomNumber(0, emptyCells.length - 1)
             var emptyCell = emptyCells[randomIndex]
 
-            position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, this.scale, this.scale / 2.0)
-            rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
-    
+            position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, this.scale - MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+            rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+            scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
+
             MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: MazeRenderer.ceilingLightsResourceId,
                 actor: {
                     transform: {
                         local: {
                             position: position,
-                            rotation: rotation
+                            rotation: rotation,
+                            scale: scale
                         }
                     }
                 }
@@ -188,7 +195,7 @@ export class MazeRenderer {
     
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
-        }        
+        }    
     }
 
     private async drawWalls() {
@@ -238,20 +245,22 @@ export class MazeRenderer {
 
         // grates
         var wallCells = Maze.findCells(this.maze.cells, CellType.Wall)
-        let grateCount = wallCells.length / 10
+        let grateCount = wallCells.length / 20
 
         for (var count = 1; count <= grateCount; count = count + 1) {
             var randomIndex = Utility.randomNumber(0, wallCells.length - 1)
             var wallCell = wallCells[randomIndex]
 
-            var position = this.getPosition(wallCell.row, wallCell.column, 0.0, 0.0, 0.0)
-    
+            var position = this.getPosition(wallCell.row, wallCell.column, this.scale / 2.0, this.scale / 2.0, this.scale / 2.0)
+            var scale = new Vector3(this.scale + MazeRenderer.minInterPlanarDistance, this.scale + MazeRenderer.minInterPlanarDistance, this.scale + MazeRenderer.minInterPlanarDistance)
+
             MRESDK.Actor.CreateFromLibrary(this.context, {
                 resourceId: MazeRenderer.wallGrateResourceId,
                 actor: {
                     transform: {
                         local: {
-                            position: position
+                            position: position,
+                            scale: scale
                         }
                     }
                 }
@@ -259,13 +268,14 @@ export class MazeRenderer {
     
             wallCells.splice(wallCells.indexOf(wallCell), 1)    
             Maze.removeNearestNeighborCells(wallCells, wallCell)
-        }                
+        }     
     }
 
     private drawStart() {
         // floor panel
-        var position = this.getPosition(this.maze.startCell.row, this.maze.startCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
-        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+        var position = this.getPosition(this.maze.startCell.row, this.maze.startCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        let scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: MazeRenderer.floorStartResourceId,
@@ -273,7 +283,8 @@ export class MazeRenderer {
                 transform: {
                     local: {
                         position: position,
-                        rotation: rotation
+                        rotation: rotation,
+                        scale: scale
                     }
                 }
             }
@@ -304,8 +315,9 @@ export class MazeRenderer {
 
     private drawEnd() {
         // floor panel
-        var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
-        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+        var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        var scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: MazeRenderer.floorEndResourceId,
@@ -313,7 +325,8 @@ export class MazeRenderer {
                 transform: {
                     local: {
                         position: position,
-                        rotation: rotation
+                        rotation: rotation,
+                        scale: scale
                     }
                 }
             }
@@ -321,7 +334,7 @@ export class MazeRenderer {
 
         // teleporter
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
-        let scale = new MRESDK.Vector3(1.5, 1.5, 1.5)
+        scale = new MRESDK.Vector3(1.5, 1.5, 1.5)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: MazeRenderer.springCampfireResourceId,
