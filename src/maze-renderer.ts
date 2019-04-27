@@ -1,6 +1,6 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
-import { Cell, CellType, Maze, WallSegment, Orientation } from "./maze"
+import { Cell, CellType, Maze, WallSegment, Orientation, Direction } from "./maze"
 import { Utility } from "./utility"
 import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
@@ -10,14 +10,27 @@ export class MazeRenderer {
     private scale: number
 
     private wallArtifactIds: string[]
-    static readonly floorArtifactId = "1189362288939762020"
-    static readonly ceilingArtifactId = "1189362283956928866"
+
+    static readonly planeZeroScale = 0.001
+    static readonly minInterPlanarDistance = 0.0001
+
+    static readonly floorResourceId = "artifact: 1189362288939762020"
+    static readonly floorStartResourceId = "artifact: 1193698949010030914"
+    static readonly floorEndResourceId = "artifact: 1193698953447604547"
+    static readonly floorGrateResourceId = "artifact: 1193698970409369928"
+
+    static readonly wallGrateResourceId = "artifact: 1193698962574410055"
+
+    static readonly ceilingResourceId = "artifact: 1189362283956928866"
+    static readonly ceilingLightsResourceId = "artifact: 1193698957834846532"
+
+    static readonly springCampfireResourceId = "teleporter: 1148791394312127008"
     
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
     
         vector3.x = -this.scale * (0.5 + this.maze.startCell.column)
-        vector3.y = -1.35
+        vector3.y = -1.3
         vector3.z = -this.scale * (0.5 + this.maze.startCell.row)
 
         return vector3
@@ -27,6 +40,7 @@ export class MazeRenderer {
         this.context = context
         this.maze = maze
         this.scale = scale
+
         this.wallArtifactIds = [
             "1190185992926003579", 
             "1190186022999163337", 
@@ -75,17 +89,16 @@ export class MazeRenderer {
 
         this.drawWalls()
 
-        this.drawTeleporter()
+        this.drawStart()
+        this.drawEnd()
     }
 
     private drawFloor() {
-        let resourceId = "artifact: " + MazeRenderer.floorArtifactId
-        let scale = {x: this.scale * this.maze.columns, y: this.scale * this.maze.rows, z: 1.0}
-
-        let position = this.getPosition(0, 0)
-        position = new Vector3(position.x + scale.x / 2.0, position.y, position.z + scale.y / 2.0)
-
-        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+        // floor
+        let resourceId = MazeRenderer.floorResourceId
+        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, MazeRenderer.planeZeroScale)
+        var position = this.getPosition(0, 0, scale.x / 2.0, 0, scale.y / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
@@ -99,16 +112,49 @@ export class MazeRenderer {
                 }
             }
         })
+
+        // grates
+        var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
+
+        this.maze.deadEndCells.forEach(deadEndCell => {
+            emptyCells.splice(emptyCells.indexOf(deadEndCell), 1)    
+            Maze.removeNearestNeighborCells(emptyCells, deadEndCell)
+        });
+
+        let grateCount = emptyCells.length / 20
+
+        for (var count = 1; count <= grateCount; count = count + 1) {
+            var randomIndex = Utility.randomNumber(0, emptyCells.length - 1)
+            var emptyCell = emptyCells[randomIndex]
+
+            position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+            rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+            scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
+
+            MRESDK.Actor.CreateFromLibrary(this.context, {
+                resourceId: MazeRenderer.floorGrateResourceId,
+                actor: {
+                    transform: {
+                        local: {
+                            position: position,
+                            rotation: rotation,
+                            scale: scale
+                        }
+                    }
+                }
+            })
+    
+            emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
+            Maze.removeNearestNeighborCells(emptyCells, emptyCell)
+        }
     }
 
     private drawCeiling() {
-        let resourceId = "artifact: " + MazeRenderer.ceilingArtifactId
-        let scale = {x: this.scale * this.maze.columns, y: this.scale * this.maze.rows, z: 1.0}
-
-        let position = this.getPosition(0, 0)
-        position = new Vector3(position.x + scale.x / 2.0, position.y + this.scale, position.z + scale.y / 2.0)
-
-        let rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        // ceiling
+        let resourceId = MazeRenderer.ceilingResourceId
+        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, MazeRenderer.planeZeroScale)
+        var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
@@ -122,9 +168,39 @@ export class MazeRenderer {
                 }
             }
         })
+
+        // lights
+        var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
+        let lightCount = emptyCells.length / 20
+
+        for (var count = 1; count <= lightCount; count = count + 1) {
+            var randomIndex = Utility.randomNumber(0, emptyCells.length - 1)
+            var emptyCell = emptyCells[randomIndex]
+
+            position = this.getPosition(emptyCell.row, emptyCell.column, this.scale / 2.0, this.scale - MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+            rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+            scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
+
+            MRESDK.Actor.CreateFromLibrary(this.context, {
+                resourceId: MazeRenderer.ceilingLightsResourceId,
+                actor: {
+                    transform: {
+                        local: {
+                            position: position,
+                            rotation: rotation,
+                            scale: scale
+                        }
+                    }
+                }
+            })
+    
+            emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
+            Maze.removeNearestNeighborCells(emptyCells, emptyCell)
+        }    
     }
 
-    private async drawWalls() {
+    private drawWalls() {
+        // walls
         for (let wallSegment of this.maze.wallSegments) {
             let wallArtifactIdIndex = wallSegment.length - 1
             let wallArtifactId = this.wallArtifactIds[wallArtifactIdIndex]
@@ -134,8 +210,8 @@ export class MazeRenderer {
             }
 
             let resourceId = "artifact: " + this.wallArtifactIds[wallSegment.length - 1]
-            let position = this.getPosition(wallSegment.row, wallSegment.column)
-            let scale = {x: this.scale, y: this.scale, z: this.scale }
+            let position = this.getPosition(wallSegment.row, wallSegment.column, 0, 0, 0)
+            let scale = new MRESDK.Vector3(this.scale, this.scale, this.scale)
 
             var rotationAngle: number
 
@@ -164,140 +240,162 @@ export class MazeRenderer {
                     }
                 }
             })
-
-            await Utility.delay(30)
         }
+
+        // grates
+        var wallCells = Maze.findCells(this.maze.cells, CellType.Wall)
+        let grateCount = wallCells.length / 20
+
+        for (var count = 1; count <= grateCount; count = count + 1) {
+            var randomIndex = Utility.randomNumber(0, wallCells.length - 1)
+            var wallCell = wallCells[randomIndex]
+
+            var position = this.getPosition(wallCell.row, wallCell.column, this.scale / 2.0, this.scale / 2.0, this.scale / 2.0)
+            var scale = new Vector3(this.scale + MazeRenderer.minInterPlanarDistance, this.scale + MazeRenderer.minInterPlanarDistance, this.scale + MazeRenderer.minInterPlanarDistance)
+
+            MRESDK.Actor.CreateFromLibrary(this.context, {
+                resourceId: MazeRenderer.wallGrateResourceId,
+                actor: {
+                    transform: {
+                        local: {
+                            position: position,
+                            scale: scale
+                        }
+                    }
+                }
+            })
+    
+            wallCells.splice(wallCells.indexOf(wallCell), 1)    
+            Maze.removeNearestNeighborCells(wallCells, wallCell)
+        }     
     }
 
-    public drawTeleporter() {
-        let position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column) 
+    private drawStart() {
+        // floor panel
+        var position = this.getPosition(this.maze.startCell.row, this.maze.startCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        let scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "teleporter:1101096999417021156",
+            resourceId: MazeRenderer.floorStartResourceId,
             actor: {
                 transform: {
                     local: {
-                        position: { 
-                            x: position.x + this.scale / 2.0, 
-                            y: position.y, 
-                            z: position.z + this.scale / 2.0
-                        }
+                        position: position,
+                        rotation: rotation,
+                        scale: scale
                     }
                 }
             }
         })
+
+        // text
+        let neighborCell = Maze.findCellAtDirection(this.maze.cells, this.maze.startCell, this.maze.startCell.openFaceDirection)
+        position = this.getPosition(neighborCell.row, neighborCell.column, this.scale / 2.0, 1.6, this.scale / 2.0)
+        rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(this.maze.startCell.openFaceDirection))
+
+        MRESDK.Actor.CreateEmpty(this.context, {
+            actor: {
+                transform: {
+                    local: {
+                        position: position,
+                        rotation: rotation
+                    }
+                },
+                text: {
+                    contents: "Try and find the exit!\n\nCreated by Andre Muis",
+                    anchor: MRESDK.TextAnchorLocation.MiddleCenter,
+                    color: { r: 255 / 255, g: 255 / 255, b: 255 / 255 },
+                    height: 0.23
+                }
+            }
+        })   
     }
 
-    private getPosition(row: number, column: number): MRESDK.Vector3 {
-        let x = this.origin.x + this.scale * column
-        let y = this.origin.y
-        let z = this.origin.z + this.scale * row 
+    private drawEnd() {
+        // floor panel
+        var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        var scale = new MRESDK.Vector3(this.scale, this.scale, MazeRenderer.planeZeroScale)
+
+        MRESDK.Actor.CreateFromLibrary(this.context, {
+            resourceId: MazeRenderer.floorEndResourceId,
+            actor: {
+                transform: {
+                    local: {
+                        position: position,
+                        rotation: rotation,
+                        scale: scale
+                    }
+                }
+            }
+        })
+
+        // teleporter
+        position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
+        scale = new MRESDK.Vector3(1.5, 1.5, 1.5)
+
+        MRESDK.Actor.CreateFromLibrary(this.context, {
+            resourceId: MazeRenderer.springCampfireResourceId,
+            actor: {
+                transform: {
+                    local: {
+                        position: position,
+                        scale: scale
+                    }
+                }
+            }
+        })
+
+        // text
+        position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 2.2, this.scale / 2.0)
+        rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(this.maze.startCell.openFaceDirection) + Math.PI)
+
+        MRESDK.Actor.CreateEmpty(this.context, {
+            actor: {
+                transform: {
+                    local: {
+                        position: position,
+                        rotation: rotation
+                    }
+                },
+                text: {
+                    contents: "Congratulations! You made it!\n\nBe sure to favorite this world.\n\nA new maze is created each day.",
+                    anchor: MRESDK.TextAnchorLocation.MiddleCenter,
+                    color: { r: 255 / 255, g: 255 / 255, b: 255 / 255 },
+                    height: 0.18
+                }
+            }
+        })   
+    }
+
+    private getPosition(row: number, column: number, xOffset: number, yOffset: number, zOffset: number) {
+        let x = this.origin.x + this.scale * column + xOffset
+        let y = this.origin.y + yOffset
+        let z = this.origin.z + this.scale * row + zOffset 
 
         return new MRESDK.Vector3(x, y, z)
     }
 
-    public async drawLayoutTests() {
-        this.drawAxes()
+    private angleFromDirection(direction: Direction): number {
+        var angle: number
+        
+        switch (direction) {
+            case Direction.Top:
+                angle = 0
+                break
+            case Direction.Left:
+                angle = -90
+                break
+            case Direction.Bottom:
+                angle = -180
+                break
+            case Direction.Right:
+                angle = -270
+                break
+        }
 
-        // this.drawUnitCube()
-
-        MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact:" + MazeRenderer.floorArtifactId,
-            actor: {
-                transform: {
-                    local: {
-                        position: { 
-                            x: 1.0, 
-                            y: 0.0, 
-                            z: 1.0
-                        },
-                        scale: {x: 2.0, y: 2.0, z: 1.0},
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians),
-                    }
-                }
-            }
-        })
-    }
-
-    public async drawAxes() {
-        const redMaterial = await this.context.assetManager.createMaterial('red', {
-            color: MRESDK.Color3.FromInts(255, 0, 0)
-        })
-
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Cylinder,
-                dimensions: { x: 1, y: 0, z: 0 },
-                radius: 0.1,
-                uSegments: 10
-            },
-            actor: {
-                appearance: { materialId: redMaterial.id },
-                transform: {
-                    local: {
-                        position: { x: 0.5, y: 0, z: 0 }
-                    }
-                }
-            }
-        })
-
-        const greenMaterial = await this.context.assetManager.createMaterial('green', {
-            color: MRESDK.Color3.FromInts(0, 255, 0)
-        })
-
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Cylinder,
-                dimensions: { x: 0, y: 1, z: 0 },
-                radius: 0.1,
-                uSegments: 10
-            },
-            actor: {
-                appearance: { materialId: greenMaterial.id },
-                transform: {
-                    local: {
-                        position: { x: 0, y: 0.5, z: 0 }
-                    }
-                }
-            }
-        })
-
-        const blueMaterial = await this.context.assetManager.createMaterial('blue', {
-            color: MRESDK.Color3.FromInts(0, 0, 255)
-        })
-
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Cylinder,
-                dimensions: { x: 0, y: 0, z: 1 },
-                radius: 0.1,
-                uSegments: 10
-            },
-            actor: {
-                appearance: { materialId: blueMaterial.id },
-                transform: {
-                    local: {
-                        position: { x: 0, y: 0.0, z: 0.5 }
-                    }
-                }
-            }
-        })
-    }
-
-    private drawUnitCube() {
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Box,
-                dimensions: { x: 1.01, y: 1.01, z: 1.01 }
-            },
-            actor: {
-                transform: {
-                    local: {
-                        position: { x: 0, y: 0, z: 0 }
-                    }
-                }
-            }
-        })
+        return angle * MRESDK.DegreesToRadians
     }
 
     public drawToConsole() {
@@ -305,11 +403,11 @@ export class MazeRenderer {
             var line = ""
 
             for (var column = 0; column < this.maze.columns; column = column + 1) {
-                let cell = this.maze.findCell(row, column)
+                let cell = Maze.findCell(this.maze.cells, row, column)
 
-                if (cell == this.maze.startCell) {
+                if (cell.equals(this.maze.startCell)) {
                     line = line + "S"
-                } else if (cell == this.maze.endCell) {
+                } else if (cell.equals(this.maze.endCell)) {
                     line = line + "E"
                 } else if (cell.type == CellType.Wall) {
                     line = line + "W"
