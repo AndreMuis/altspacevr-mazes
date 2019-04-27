@@ -240,7 +240,7 @@ export class MazeRenderer {
                 }
             })
 
-            await Utility.delay(10)
+            await Utility.delay(20)
         }
 
         // grates
