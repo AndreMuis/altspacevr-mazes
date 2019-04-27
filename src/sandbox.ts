@@ -26,10 +26,10 @@ export class Sandbox {
         })
     }
 
-    public async drawAxes() {
-        const redMaterial = await this.context.assetManager.createMaterial('red', {
+    public drawAxes() {
+        const redMaterial = this.context.assetManager.createMaterial('red', {
             color: MRESDK.Color3.FromInts(255, 0, 0)
-        })
+        }).value
 
         MRESDK.Actor.CreatePrimitive(this.context, {
             definition: {
@@ -48,9 +48,9 @@ export class Sandbox {
             }
         })
 
-        const greenMaterial = await this.context.assetManager.createMaterial('green', {
+        const greenMaterial = this.context.assetManager.createMaterial('green', {
             color: MRESDK.Color3.FromInts(0, 255, 0)
-        })
+        }).value
 
         MRESDK.Actor.CreatePrimitive(this.context, {
             definition: {
@@ -69,9 +69,9 @@ export class Sandbox {
             }
         })
 
-        const blueMaterial = await this.context.assetManager.createMaterial('blue', {
+        const blueMaterial = this.context.assetManager.createMaterial('blue', {
             color: MRESDK.Color3.FromInts(0, 0, 255)
-        })
+        }).value
 
         MRESDK.Actor.CreatePrimitive(this.context, {
             definition: {
