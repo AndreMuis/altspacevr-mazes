@@ -4,6 +4,11 @@ import { Cell, CellType, Maze, WallSegment, Orientation, Direction } from "./maz
 import { Utility } from "./utility"
 import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
+export class RandomArtifact {
+    constructor(public resourceId: string, public scale: number) {
+    }
+}   
+
 export class MazeRenderer {
     private context: MRESDK.Context
     private maze: Maze
@@ -26,6 +31,8 @@ export class MazeRenderer {
 
     static readonly springCampfireResourceId = "teleporter: 1148791394312127008"
     
+    private randomArtifacts: RandomArtifact[]
+
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
     
@@ -81,6 +88,23 @@ export class MazeRenderer {
             "1190186153140028281", 
             "1190186017596899714", 
             "1190186105090081645"]
+
+        this.randomArtifacts = [
+            new RandomArtifact("artifact: 1138718566997033797", 1.0), 
+            new RandomArtifact("artifact: 1138718799789294497", 1.0), 
+            new RandomArtifact("artifact: 1138718794806461341", 0.5),
+            new RandomArtifact("artifact: 1138718377389326651", 0.5),
+            new RandomArtifact("artifact: 1138718342190727473", 1.0), 
+            new RandomArtifact("artifact: 1138718402722923277", 1.0), 
+            new RandomArtifact("artifact: 1138718474101588781", 1.0), 
+            new RandomArtifact("artifact: 1138718662451004253", 1.0), 
+            new RandomArtifact("artifact: 1138718751630295942", 1.0), 
+            new RandomArtifact("artifact: 1138718696013824871", 2.0),
+            new RandomArtifact("artifact: 1138718851270181821", 1.0), 
+            new RandomArtifact("artifact: 1162104634278412488", 1.0), 
+            new RandomArtifact("artifact: 1162104847659434229", 0.2),
+            new RandomArtifact("artifact: 1162104144006218376", 1.0), 
+            new RandomArtifact("artifact: 1162104245290271398", 1.0)]
     }
 
     public draw() {
@@ -91,6 +115,8 @@ export class MazeRenderer {
 
         this.drawStart()
         this.drawEnd()
+
+        this.drawRandomArtifacts()
     }
 
     private drawFloor() {
@@ -117,9 +143,9 @@ export class MazeRenderer {
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
 
         this.maze.deadEndCells.forEach(deadEndCell => {
-            emptyCells.splice(emptyCells.indexOf(deadEndCell), 1)    
+            emptyCells.splice(emptyCells.indexOf(deadEndCell), 1)
             Maze.removeNearestNeighborCells(emptyCells, deadEndCell)
-        });
+        })
 
         let grateCount = emptyCells.length / 20
 
@@ -367,6 +393,35 @@ export class MazeRenderer {
                 }
             }
         })   
+    }
+
+    private drawRandomArtifacts() {
+        const deadEndCells  = [...this.maze.deadEndCells]
+        deadEndCells.splice(deadEndCells.indexOf(this.maze.startCell), 1)    
+        deadEndCells.splice(deadEndCells.indexOf(this.maze.endCell), 1)    
+
+        this.randomArtifacts.forEach(randomArtifact => {
+            var randomIndex = Utility.randomNumber(0, deadEndCells.length - 1)
+            var deadEndCell = deadEndCells[randomIndex]
+
+            var position = this.getPosition(deadEndCell.row, deadEndCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
+            var scale = new Vector3(2.0 * randomArtifact.scale, 2.0 * randomArtifact.scale, 2.0 * randomArtifact.scale)
+
+            MRESDK.Actor.CreateFromLibrary(this.context, {
+                resourceId: randomArtifact.resourceId,
+                actor: {
+                    transform: {
+                        local: {
+                            position: position,
+                            scale: scale
+                        }
+                    }
+                }
+            })
+    
+            deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
+            Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
+        })
     }
 
     private getPosition(row: number, column: number, xOffset: number, yOffset: number, zOffset: number) {
