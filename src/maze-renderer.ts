@@ -144,10 +144,12 @@ export class MazeRenderer {
         // grates
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
 
-        this.maze.deadEndCells.forEach(deadEndCell => {
-            emptyCells.splice(emptyCells.indexOf(deadEndCell), 1)
-            Maze.removeNearestNeighborCells(emptyCells, deadEndCell)
-        })
+        for (const deadEndCell of this.maze.deadEndCells) {
+            var emptyCell = Maze.findCell(emptyCells, deadEndCell.row, deadEndCell.column)
+
+            emptyCells.splice(emptyCells.indexOf(emptyCell), 1)
+            Maze.removeNearestNeighborCells(emptyCells, emptyCell)
+        }
 
         let grateCount = emptyCells.length / 20
 
