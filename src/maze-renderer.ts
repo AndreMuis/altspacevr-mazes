@@ -17,7 +17,7 @@ export class MazeRenderer {
     private wallArtifactIds: string[]
 
     static readonly planeZeroScale = 0.001
-    static readonly minInterPlanarDistance = 0.0001
+    static readonly minInterPlanarDistance = 0.001
 
     static readonly floorResourceId = "artifact: 1189362288939762020"
     static readonly floorStartResourceId = "artifact: 1193698949010030914"
@@ -119,7 +119,7 @@ export class MazeRenderer {
         this.drawRandomArtifacts()
     }
 
-    private drawFloor() {
+    private async drawFloor() {
         // floor
         let resourceId = MazeRenderer.floorResourceId
         var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
@@ -138,6 +138,8 @@ export class MazeRenderer {
                 }
             }
         })
+
+        await Utility.delay(10)
 
         // grates
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
@@ -169,13 +171,15 @@ export class MazeRenderer {
                     }
                 }
             })
+
+            await Utility.delay(10)
     
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
         }
     }
 
-    private drawCeiling() {
+    private async drawCeiling() {
         // ceiling
         let resourceId = MazeRenderer.ceilingResourceId
         var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
@@ -194,6 +198,8 @@ export class MazeRenderer {
                 }
             }
         })
+
+        await Utility.delay(10)
 
         // lights
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
@@ -219,13 +225,15 @@ export class MazeRenderer {
                     }
                 }
             })
+
+            await Utility.delay(10)
     
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
         }    
     }
 
-    private drawWalls() {
+    private async drawWalls() {
         // walls
         for (let wallSegment of this.maze.wallSegments) {
             let wallArtifactIdIndex = wallSegment.length - 1
@@ -266,6 +274,8 @@ export class MazeRenderer {
                     }
                 }
             })
+
+            await Utility.delay(10)
         }
 
         // grates
@@ -290,13 +300,15 @@ export class MazeRenderer {
                     }
                 }
             })
+
+            await Utility.delay(10)
     
             wallCells.splice(wallCells.indexOf(wallCell), 1)    
             Maze.removeNearestNeighborCells(wallCells, wallCell)
         }     
     }
 
-    private drawStart() {
+    private async drawStart() {
         // floor panel
         var position = this.getPosition(this.maze.startCell.row, this.maze.startCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
@@ -314,6 +326,8 @@ export class MazeRenderer {
                 }
             }
         })
+
+        await Utility.delay(10)
 
         // text
         let neighborCell = Maze.findCellAtDirection(this.maze.cells, this.maze.startCell, this.maze.startCell.openFaceDirection)
@@ -336,9 +350,11 @@ export class MazeRenderer {
                 }
             }
         })   
+
+        await Utility.delay(10)
     }
 
-    private drawEnd() {
+    private async drawEnd() {
         // floor panel
         var position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, MazeRenderer.minInterPlanarDistance, this.scale / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
@@ -357,6 +373,8 @@ export class MazeRenderer {
             }
         })
 
+        await Utility.delay(10)
+
         // teleporter
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
         scale = new MRESDK.Vector3(1.5, 1.5, 1.5)
@@ -372,6 +390,8 @@ export class MazeRenderer {
                 }
             }
         })
+
+        await Utility.delay(10)
 
         // text
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 2.2, this.scale / 2.0)
@@ -393,14 +413,16 @@ export class MazeRenderer {
                 }
             }
         })   
+
+        await Utility.delay(10)
     }
 
-    private drawRandomArtifacts() {
+    private async drawRandomArtifacts() {
         const deadEndCells  = [...this.maze.deadEndCells]
         deadEndCells.splice(deadEndCells.indexOf(this.maze.startCell), 1)    
         deadEndCells.splice(deadEndCells.indexOf(this.maze.endCell), 1)    
 
-        this.randomArtifacts.forEach(randomArtifact => {
+        for (const randomArtifact of this.randomArtifacts) {
             var randomIndex = Utility.randomNumber(0, deadEndCells.length - 1)
             var deadEndCell = deadEndCells[randomIndex]
 
@@ -418,10 +440,12 @@ export class MazeRenderer {
                     }
                 }
             })
+
+            await Utility.delay(10)
     
             deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
             Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
-        })
+        }
     }
 
     private getPosition(row: number, column: number, xOffset: number, yOffset: number, zOffset: number) {
