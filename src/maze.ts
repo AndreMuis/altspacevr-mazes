@@ -86,7 +86,7 @@ export class Maze {
     }
     
     public populateCells() {
-        var map = new ROT.Map.IceyMaze(this.columns, this.rows, 0)
+        var map = new ROT.Map.EllerMaze(this.columns, this.rows)
 
         var userCallback = (column: number, row: number, value: number) => {
             const cell = new Cell(row, column, value)

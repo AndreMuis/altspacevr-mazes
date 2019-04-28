@@ -12,7 +12,7 @@ export default class App {
     }
 
     private started() {
-        var maze = new Maze(39, 39)
+        var maze = new Maze(29, 29)
         maze.setup()
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 

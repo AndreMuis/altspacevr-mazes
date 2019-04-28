@@ -37,7 +37,7 @@ export class MazeRenderer {
         var vector3 = new MRESDK.Vector3()
     
         vector3.x = -this.scale * (0.5 + this.maze.startCell.column)
-        vector3.y = -1.3
+        vector3.y = -1.4
         vector3.z = -this.scale * (0.5 + this.maze.startCell.row)
 
         return vector3
@@ -122,7 +122,7 @@ export class MazeRenderer {
     private drawFloor() {
         // floor
         let resourceId = MazeRenderer.floorResourceId
-        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, MazeRenderer.planeZeroScale)
+        var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, 0, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
 
@@ -178,7 +178,7 @@ export class MazeRenderer {
     private drawCeiling() {
         // ceiling
         let resourceId = MazeRenderer.ceilingResourceId
-        var scale = new MRESDK.Vector3(this.scale * this.maze.columns, this.scale * this.maze.rows, MazeRenderer.planeZeroScale)
+        var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
 
@@ -375,7 +375,7 @@ export class MazeRenderer {
 
         // text
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 2.2, this.scale / 2.0)
-        rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(this.maze.startCell.openFaceDirection) + Math.PI)
+        rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(this.maze.endCell.openFaceDirection) + Math.PI)
 
         MRESDK.Actor.CreateEmpty(this.context, {
             actor: {
