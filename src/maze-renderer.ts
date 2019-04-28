@@ -31,7 +31,7 @@ export class MazeRenderer {
 
     static readonly springCampfireResourceId = "teleporter: 1148791394312127008"
     
-    private randomArtifacts: RandomArtifact[]
+    public randomArtifacts: RandomArtifact[]
 
     get origin(): MRESDK.Vector3 {
         var vector3 = new MRESDK.Vector3()
@@ -93,8 +93,8 @@ export class MazeRenderer {
             new RandomArtifact("artifact: 1138718566997033797", 1.0), 
             new RandomArtifact("artifact: 1138718799789294497", 1.0), 
             new RandomArtifact("artifact: 1138718794806461341", 0.5),
-            new RandomArtifact("artifact: 1138718377389326651", 0.5),
-            new RandomArtifact("artifact: 1138718342190727473", 1.0), 
+            new RandomArtifact("artifact: 1138718377389326651", 0.25),
+            new RandomArtifact("artifact: 1138718342190727473", 0.5), 
             new RandomArtifact("artifact: 1138718402722923277", 1.0), 
             new RandomArtifact("artifact: 1138718474101588781", 1.0), 
             new RandomArtifact("artifact: 1138718662451004253", 1.0), 
@@ -423,28 +423,32 @@ export class MazeRenderer {
         deadEndCells.splice(deadEndCells.indexOf(this.maze.endCell), 1)    
 
         for (const randomArtifact of this.randomArtifacts) {
-            var randomIndex = Utility.randomNumber(0, deadEndCells.length - 1)
-            var deadEndCell = deadEndCells[randomIndex]
+            if (deadEndCells.length >= 1) {
+                var randomIndex = Utility.randomNumber(0, deadEndCells.length - 1)
+                var deadEndCell = deadEndCells[randomIndex]
 
-            var position = this.getPosition(deadEndCell.row, deadEndCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
-            var scale = new Vector3(2.0 * randomArtifact.scale, 2.0 * randomArtifact.scale, 2.0 * randomArtifact.scale)
+                var position = this.getPosition(deadEndCell.row, deadEndCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
+                var scale = new Vector3(2.0 * randomArtifact.scale, 2.0 * randomArtifact.scale, 2.0 * randomArtifact.scale)
+                var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Up(), this.angleFromDirection(deadEndCell.openFaceDirection))
 
-            MRESDK.Actor.CreateFromLibrary(this.context, {
-                resourceId: randomArtifact.resourceId,
-                actor: {
-                    transform: {
-                        local: {
-                            position: position,
-                            scale: scale
+                MRESDK.Actor.CreateFromLibrary(this.context, {
+                    resourceId: randomArtifact.resourceId,
+                    actor: {
+                        transform: {
+                            local: {
+                                position: position,
+                                scale: scale,
+                                rotation: rotation
+                            }
                         }
                     }
-                }
-            })
+                })
 
-            await Utility.delay(10)
+                await Utility.delay(10)
     
-            deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
-            Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
+                deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
+                Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
+            }
         }
     }
 

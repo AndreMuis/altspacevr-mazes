@@ -1,4 +1,5 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
+import { MazeRenderer } from './maze-renderer';
 
 export class Sandbox {
     private context: MRESDK.Context
@@ -10,16 +11,46 @@ export class Sandbox {
     public draw() {
         this.drawAxes()
 
-        // this.drawUnitCube()
+        const renderer = new MazeRenderer(null, null, null)
 
+        var z = 0
+        for (const artifact of renderer.randomArtifacts) {
+            this.drawArtifact(artifact.resourceId, 0, z, artifact.scale)
+            z = z + 1
+        }
+    }
+
+    private drawArtifact(resourceId: string, x: number, z: number, scale: number) {
         MRESDK.Actor.CreateFromLibrary(this.context, {
-            resourceId: "artifact: 1138718566997033797",
+            resourceId: resourceId,
             actor: {
                 transform: {
                     local: {
-                        position: new MRESDK.Vector3(0.5, 0.0, 0.5),
-                        scale: new MRESDK.Vector3(1, 1, 1),
+                        position: new MRESDK.Vector3(x, 0.0, z),
+                        scale: new MRESDK.Vector3(scale, scale, scale),
                         rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 0 * MRESDK.DegreesToRadians),
+                    }
+                }
+            }
+        })
+    }
+
+    private drawUnitCube() {
+        const whiteMaterial = this.context.assetManager.createMaterial('white', {
+            color: new MRESDK.Color4(1, 1, 1, 0.5)
+        }).value
+        whiteMaterial.alphaMode = MRESDK.AlphaMode.Blend
+
+        MRESDK.Actor.CreatePrimitive(this.context, {
+            definition: {
+                shape: MRESDK.PrimitiveShape.Box,
+                dimensions: new MRESDK.Vector3(1.0, 1.0, 1.0)
+            },
+            actor: {
+                appearance: { materialId: whiteMaterial.id },
+                transform: {
+                    local: {
+                        position: new MRESDK.Vector3(0, 0, 0)
                     }
                 }
             }
@@ -84,23 +115,7 @@ export class Sandbox {
                 appearance: { materialId: blueMaterial.id },
                 transform: {
                     local: {
-                        position: new MRESDK.Vector3(0, 0.0, 0.5)
-                    }
-                }
-            }
-        })
-    }
-
-    private drawUnitCube() {
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Box,
-                dimensions: new MRESDK.Vector3(1.01, 1.01, 1.01)
-            },
-            actor: {
-                transform: {
-                    local: {
-                        position: new MRESDK.Vector3(0, 0, 0)
+                        position: new MRESDK.Vector3(0.0, 0.0, 0.5)
                     }
                 }
             }
