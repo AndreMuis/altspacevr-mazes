@@ -1,4 +1,5 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
+require('@microsoft/mixed-reality-extension-sdk/built/protocols/protocol').DefaultConnectionTimeoutSeconds = 0
 
 import { Maze } from "./maze"
 import { MazeRenderer } from "./maze-renderer"
