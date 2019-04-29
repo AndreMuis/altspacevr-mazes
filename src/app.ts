@@ -1,4 +1,5 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
+require('@microsoft/mixed-reality-extension-sdk/built/protocols/protocol').DefaultConnectionTimeoutSeconds = 0
 
 import { Maze } from "./maze"
 import { MazeRenderer } from "./maze-renderer"
@@ -6,8 +7,6 @@ import { Sandbox } from "./sandbox"
 
 export default class App {
     constructor(private context: MRESDK.Context, private baseUrl: string) {
-        require('@microsoft/mixed-reality-extension-sdk/built/protocols/protocol').DefaultConnectionTimeoutSeconds = 0
-
         this.context.onStarted(() => this.started())
     }
 
