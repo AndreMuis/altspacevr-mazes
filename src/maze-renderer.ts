@@ -140,8 +140,6 @@ export class MazeRenderer {
             }
         })
 
-        await Utility.delay(30)
-
         // grates
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
 
@@ -175,8 +173,6 @@ export class MazeRenderer {
                 }
             })
 
-            await Utility.delay(30)
-    
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
         }
@@ -201,8 +197,6 @@ export class MazeRenderer {
                 }
             }
         })
-
-        await Utility.delay(30)
 
         // lights
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
@@ -229,8 +223,6 @@ export class MazeRenderer {
                 }
             })
 
-            await Utility.delay(30)
-    
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
         }    
@@ -277,8 +269,6 @@ export class MazeRenderer {
                     }
                 }
             })
-
-            await Utility.delay(30)
         }
 
         // grates
@@ -304,8 +294,6 @@ export class MazeRenderer {
                 }
             })
 
-            await Utility.delay(30)
-    
             wallCells.splice(wallCells.indexOf(wallCell), 1)    
             Maze.removeNearestNeighborCells(wallCells, wallCell)
         }     
@@ -330,8 +318,6 @@ export class MazeRenderer {
             }
         })
 
-        await Utility.delay(30)
-
         // text
         let neighborCell = Maze.findCellAtDirection(this.maze.cells, this.maze.startCell, this.maze.startCell.openFaceDirection)
         position = this.getPosition(neighborCell.row, neighborCell.column, this.scale / 2.0, 1.6, this.scale / 2.0)
@@ -353,8 +339,6 @@ export class MazeRenderer {
                 }
             }
         })   
-
-        await Utility.delay(30)
     }
 
     private async drawEnd() {
@@ -376,8 +360,6 @@ export class MazeRenderer {
             }
         })
 
-        await Utility.delay(30)
-
         // teleporter
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
         scale = new MRESDK.Vector3(1.5, 1.5, 1.5)
@@ -393,8 +375,6 @@ export class MazeRenderer {
                 }
             }
         })
-
-        await Utility.delay(30)
 
         // text
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 2.2, this.scale / 2.0)
@@ -416,8 +396,6 @@ export class MazeRenderer {
                 }
             }
         })   
-
-        await Utility.delay(30)
     }
 
     private async drawRandomArtifacts() {
@@ -447,8 +425,6 @@ export class MazeRenderer {
                     }
                 })
 
-                await Utility.delay(30)
-    
                 deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
                 Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
             }
