@@ -17,7 +17,7 @@ export class MazeRenderer {
     private wallArtifactIds: string[]
 
     static readonly planeZeroScale = 0.001
-    static readonly minInterPlanarDistance = 0.001
+    static readonly minInterPlanarDistance = 0.005
 
     static readonly floorResourceId = "artifact: 1189362288939762020"
     static readonly floorStartResourceId = "artifact: 1193698949010030914"
