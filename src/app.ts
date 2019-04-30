@@ -19,6 +19,31 @@ export default class App {
 
         //let sandbox = new Sandbox(this.context)
         //sandbox.draw()
+
+        this.playBackgroundMusic()
+    }
+
+    private playBackgroundMusic() {
+        const sphereActor = MRESDK.Actor.CreatePrimitive(this.context, {
+            definition: {
+                shape: MRESDK.PrimitiveShape.Sphere
+            }
+        }).value
+
+        const backgroundMusicAsset = this.context.assetManager.createSound(
+            'backgroundMusic',
+            { uri: `${this.baseUrl}/Orbit LOOP.wav` }
+        )
+
+        sphereActor.startSound(backgroundMusicAsset.value.id, 
+        {
+            volume: 0.2,
+            looping: true,
+            doppler: 0.0,
+            spread: 1.0,
+            rolloffStartDistance: 1000.0
+        },
+        0.0)
     }
 }
     
