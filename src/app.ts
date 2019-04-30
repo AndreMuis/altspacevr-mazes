@@ -32,7 +32,7 @@ export default class App {
 
         const backgroundMusicAsset = this.context.assetManager.createSound(
             'backgroundMusic',
-            { uri: `${this.baseUrl}/Orbit LOOP.wav` }
+            { uri: `${this.baseUrl}/GTR_note_C3.wav` }
         )
 
         sphereActor.startSound(backgroundMusicAsset.value.id, 
