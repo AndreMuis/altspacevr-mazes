@@ -40,12 +40,12 @@ export default class App {
 
         const backgroundMusicAsset = this.context.assetManager.createSound(
             'backgroundMusic',
-            { uri: `${this.baseUrl}/Orbit LOOP.wav` }
+            { uri: `${this.baseUrl}/Orbit LOOP.ogg` }
         )
 
         sphereActor.startSound(backgroundMusicAsset.value.id, 
         {
-            volume: 0.2,
+            volume: 0.1,
             looping: true,
             doppler: 0.0,
             spread: 1.0,
