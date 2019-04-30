@@ -45,7 +45,7 @@ export default class App {
 
         sphereActor.startSound(backgroundMusicAsset.value.id, 
         {
-            volume: 0.05,
+            volume: 0.01,
             looping: true,
             doppler: 0.0,
             spread: 1.0,
