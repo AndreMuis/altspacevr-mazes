@@ -27,12 +27,20 @@ export default class App {
         const sphereActor = MRESDK.Actor.CreatePrimitive(this.context, {
             definition: {
                 shape: MRESDK.PrimitiveShape.Sphere
+            },
+            actor: {
+                transform: {
+                    local: {
+                        position: new MRESDK.Vector3(0.0, -5.0, 0.0)
+                    }
+                }
             }
+
         }).value
 
         const backgroundMusicAsset = this.context.assetManager.createSound(
             'backgroundMusic',
-            { uri: `${this.baseUrl}/GTR_note_C3.wav` }
+            { uri: `${this.baseUrl}/Orbit LOOP.wav` }
         )
 
         sphereActor.startSound(backgroundMusicAsset.value.id, 
