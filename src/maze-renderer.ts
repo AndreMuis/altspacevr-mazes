@@ -1,4 +1,5 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
+require('@microsoft/mixed-reality-extension-sdk/built/protocols/protocol').DefaultConnectionTimeoutSeconds = 0
 
 import { Cell, CellType, Maze, WallSegment, Orientation, Direction } from "./maze"
 import { Utility } from "./utility"
