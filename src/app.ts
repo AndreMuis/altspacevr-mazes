@@ -24,34 +24,34 @@ export default class App {
     }
 
     private playBackgroundMusic() {
-        const sphereActor = MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Sphere
-            },
+        const assetContainer = new MRESDK.AssetContainer(this.context)
+
+        const sphereActor = MRESDK.Actor.Create(this.context, {
             actor: {
+                appearance: { 
+                    meshId: assetContainer.createSphereMesh('sphere', 0.4, 8, 4).id  
+                },
                 transform: {
                     local: {
                         position: new MRESDK.Vector3(0.0, -5.0, 0.0)
                     }
                 }
             }
+        })
 
-        }).value
-
-        const backgroundMusicAsset = this.context.assetManager.createSound(
+        const backgroundMusicAsset = assetContainer.createSound(
             'backgroundMusic',
             { uri: `${this.baseUrl}/Orbit LOOP.ogg` }
         )
 
-        sphereActor.startSound(backgroundMusicAsset.value.id, 
+        sphereActor.startSound(backgroundMusicAsset.id, 
         {
             volume: 0.02,
             looping: true,
             doppler: 0.0,
             spread: 1.0,
             rolloffStartDistance: 1000.0
-        },
-        0.0)
+        })
     }
 }
     

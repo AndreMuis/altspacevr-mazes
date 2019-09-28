@@ -37,18 +37,19 @@ export class Sandbox {
     }
 
     private drawUnitCube() {
-        const whiteMaterial = this.context.assetManager.createMaterial('white', {
+        const assetContainer = new MRESDK.AssetContainer(this.context)
+
+        const whiteMaterial = assetContainer.createMaterial('white', {
             color: new MRESDK.Color4(1, 1, 1, 0.5)
-        }).value
+        })
         whiteMaterial.alphaMode = MRESDK.AlphaMode.Blend
 
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Box,
-                dimensions: new MRESDK.Vector3(1.0, 1.0, 1.0)
-            },
+        MRESDK.Actor.Create(this.context, {
             actor: {
-                appearance: { materialId: whiteMaterial.id },
+                appearance: { 
+                    meshId: assetContainer.createBoxMesh('unitCubeBox', 1.0, 1.0, 1.0).id,
+                    materialId: whiteMaterial.id
+                },
                 transform: {
                     local: {
                         position: new MRESDK.Vector3(0, 0, 0)
@@ -59,19 +60,18 @@ export class Sandbox {
     }
 
     public drawAxes() {
-        const redMaterial = this.context.assetManager.createMaterial('red', {
-            color: MRESDK.Color3.FromInts(255, 0, 0)
-        }).value
+        const assetContainer = new MRESDK.AssetContainer(this.context)
 
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Cylinder,
-                dimensions: new MRESDK.Vector3(1, 0, 0),
-                radius: 0.1,
-                uSegments: 10
-            },
+        const redMaterial = assetContainer.createMaterial('red', {
+            color: MRESDK.Color3.FromInts(255, 0, 0)
+        })
+
+        MRESDK.Actor.Create(this.context, {
             actor: {
-                appearance: { materialId: redMaterial.id },
+                appearance: { 
+                    meshId: assetContainer.createCylinderMesh('xAxisCylinder', 1.0, 0.1, 'x', 10).id,
+                    materialId: redMaterial.id 
+                },
                 transform: {
                     local: {
                         position: new MRESDK.Vector3(0.5, 0, 0)
@@ -80,19 +80,16 @@ export class Sandbox {
             }
         })
 
-        const greenMaterial = this.context.assetManager.createMaterial('green', {
+        const greenMaterial = assetContainer.createMaterial('green', {
             color: MRESDK.Color3.FromInts(0, 255, 0)
-        }).value
+        })
 
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Cylinder,
-                dimensions: new MRESDK.Vector3(0, 1, 0),
-                radius: 0.1,
-                uSegments: 10
-            },
-            actor: {
-                appearance: { materialId: greenMaterial.id },
+        MRESDK.Actor.Create(this.context, {
+            actor: {                
+                appearance: {
+                    meshId: assetContainer.createCylinderMesh('yAxisCylinder', 1.0, 0.1, 'y', 10).id,
+                    materialId: greenMaterial.id 
+                },
                 transform: {
                     local: {
                         position: new MRESDK.Vector3(0, 0.5, 0)
@@ -101,19 +98,16 @@ export class Sandbox {
             }
         })
 
-        const blueMaterial = this.context.assetManager.createMaterial('blue', {
+        const blueMaterial = assetContainer.createMaterial('blue', {
             color: MRESDK.Color3.FromInts(0, 0, 255)
-        }).value
+        })
 
-        MRESDK.Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: MRESDK.PrimitiveShape.Cylinder,
-                dimensions: new MRESDK.Vector3(0, 0, 1),
-                radius: 0.1,
-                uSegments: 10
-            },
+        MRESDK.Actor.Create(this.context, {
             actor: {
-                appearance: { materialId: blueMaterial.id },
+                appearance: {
+                    meshId: assetContainer.createCylinderMesh('zAxisCylinder', 1.0, 0.1, 'z', 10).id,
+                    materialId: blueMaterial.id 
+                },
                 transform: {
                     local: {
                         position: new MRESDK.Vector3(0.0, 0.0, 0.5)
