@@ -16,7 +16,7 @@ export class MazeRenderer {
 
     private wallArtifactIds: string[]
 
-    private delayInMilliseconds = 100
+    private delayInMilliseconds = 10
 
     static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.005
@@ -140,6 +140,7 @@ export class MazeRenderer {
                 }
             }
         })
+        await Utility.delay(this.delayInMilliseconds)
 
         // grates
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
@@ -173,6 +174,7 @@ export class MazeRenderer {
                     }
                 }
             })
+            await Utility.delay(this.delayInMilliseconds)
 
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
@@ -198,6 +200,7 @@ export class MazeRenderer {
                 }
             }
         })
+        await Utility.delay(this.delayInMilliseconds)
 
         // lights
         var emptyCells = Maze.findCells(this.maze.cells, CellType.Empty)
@@ -223,6 +226,7 @@ export class MazeRenderer {
                     }
                 }
             })
+            await Utility.delay(this.delayInMilliseconds)
 
             emptyCells.splice(emptyCells.indexOf(emptyCell), 1)    
             Maze.removeNearestNeighborCells(emptyCells, emptyCell)
@@ -320,6 +324,7 @@ export class MazeRenderer {
                 }
             }
         })
+        await Utility.delay(this.delayInMilliseconds)
 
         // text
         let neighborCell = Maze.findCellAtDirection(this.maze.cells, this.maze.startCell, this.maze.startCell.openFaceDirection)
@@ -342,6 +347,7 @@ export class MazeRenderer {
                 }
             }
         })   
+        await Utility.delay(this.delayInMilliseconds)
     }
 
     private async drawEnd() {
@@ -362,6 +368,7 @@ export class MazeRenderer {
                 }
             }
         })
+        await Utility.delay(this.delayInMilliseconds)
 
         // teleporter
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 0.0, this.scale / 2.0)
@@ -378,6 +385,7 @@ export class MazeRenderer {
                 }
             }
         })
+        await Utility.delay(this.delayInMilliseconds)
 
         // text
         position = this.getPosition(this.maze.endCell.row, this.maze.endCell.column, this.scale / 2.0, 2.2, this.scale / 2.0)
@@ -399,6 +407,7 @@ export class MazeRenderer {
                 }
             }
         })   
+        await Utility.delay(this.delayInMilliseconds)
     }
 
     private async drawRandomArtifacts() {
