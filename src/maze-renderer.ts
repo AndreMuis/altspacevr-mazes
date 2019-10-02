@@ -16,7 +16,7 @@ export class MazeRenderer {
 
     private wallArtifactIds: string[]
 
-    private delayInMilliseconds = 20
+    private delayInMilliseconds = 40
 
     static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.005
