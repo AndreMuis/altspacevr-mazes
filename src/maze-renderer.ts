@@ -335,7 +335,7 @@ export class MazeRenderer {
                     }
                 },
                 text: {
-                    contents: "Try and find the exit!\n\nCreated by Andre Muis",
+                    contents: "Try and find the exit!\n\nCreated by Happy Endings",
                     anchor: MRESDK.TextAnchorLocation.MiddleCenter,
                     color: { r: 255 / 255, g: 255 / 255, b: 255 / 255 },
                     height: 0.23
