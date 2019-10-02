@@ -270,7 +270,7 @@ export class MazeRenderer {
                     }
                 }
             })
-            Utility.delay(this.delayInMilliseconds)
+            await Utility.delay(this.delayInMilliseconds)
         }
 
         // grates
@@ -295,7 +295,7 @@ export class MazeRenderer {
                     }
                 }
             })
-            Utility.delay(this.delayInMilliseconds)
+            await Utility.delay(this.delayInMilliseconds)
 
             wallCells.splice(wallCells.indexOf(wallCell), 1)    
             Maze.removeNearestNeighborCells(wallCells, wallCell)
@@ -427,7 +427,7 @@ export class MazeRenderer {
                         }
                     }
                 })
-                Utility.delay(this.delayInMilliseconds)
+                await Utility.delay(this.delayInMilliseconds)
 
                 deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
                 Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
