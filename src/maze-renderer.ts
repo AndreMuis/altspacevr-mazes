@@ -16,6 +16,8 @@ export class MazeRenderer {
 
     private wallArtifactIds: string[]
 
+    private delayInMilliseconds = 100
+
     static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.005
 
@@ -268,7 +270,7 @@ export class MazeRenderer {
                     }
                 }
             })
-            Utility.delay(10)
+            Utility.delay(this.delayInMilliseconds)
         }
 
         // grates
@@ -293,7 +295,7 @@ export class MazeRenderer {
                     }
                 }
             })
-            Utility.delay(10)
+            Utility.delay(this.delayInMilliseconds)
 
             wallCells.splice(wallCells.indexOf(wallCell), 1)    
             Maze.removeNearestNeighborCells(wallCells, wallCell)
@@ -425,7 +427,7 @@ export class MazeRenderer {
                         }
                     }
                 })
-                Utility.delay(10)
+                Utility.delay(this.delayInMilliseconds)
 
                 deadEndCells.splice(deadEndCells.indexOf(deadEndCell), 1)    
                 Maze.removeNearestNeighborCells(deadEndCells, deadEndCell)
