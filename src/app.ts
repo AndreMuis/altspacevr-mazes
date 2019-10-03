@@ -14,13 +14,13 @@ export default class App {
         maze.setup()
 
         let renderer = new MazeRenderer(this.context, maze, 3.0) 
-        renderer.draw()
+        //renderer.draw()
         //renderer.drawToConsole()
 
-        //let sandbox = new Sandbox(this.context)
-        //sandbox.draw()
+        let sandbox = new Sandbox(this.context)
+        sandbox.draw()
 
-        this.playBackgroundMusic()
+        // this.playBackgroundMusic()
     }
 
     private playBackgroundMusic() {
