@@ -14,25 +14,24 @@ export class MazeRenderer {
     private maze: Maze
     private scale: number
 
-    private wallArtifactIds: string[]
-
     private delayInMilliseconds = 20
 
     static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.005
 
-    static readonly floorResourceId = "artifact: 1189362288939762020"
-    static readonly floorStartResourceId = "artifact: 1193698949010030914"
-    static readonly floorEndResourceId = "artifact: 1193698953447604547"
-    static readonly floorGrateResourceId = "artifact: 1193698970409369928"
+    static readonly floorResourceId = "artifact: 1310377349564334600"
+    static readonly floorStartResourceId = "artifact: 1310377356510102026 "
+    static readonly floorEndResourceId = "artifact: 1310377342090084870"
+    static readonly floorGrateResourceId = "artifact: 1310377363724304908"
 
-    static readonly wallGrateResourceId = "artifact: 1193698962574410055"
+    static readonly wallGrateResourceId = "artifact: 1310377332787118596"
 
-    static readonly ceilingResourceId = "artifact: 1189362283956928866"
-    static readonly ceilingLightsResourceId = "artifact: 1193698957834846532"
+    static readonly ceilingResourceId = "artifact: 1310377318895583744"
+    static readonly ceilingLightsResourceId = "artifact: 1310377325967180290"
 
     static readonly springCampfireResourceId = "teleporter: 1148791394312127008"
     
+    public wallArtifactIds: string[]
     public randomArtifacts: RandomArtifact[]
 
     get origin(): MRESDK.Vector3 {
@@ -51,45 +50,45 @@ export class MazeRenderer {
         this.scale = scale
 
         this.wallArtifactIds = [
-            "1190185992926003579", 
-            "1190186022999163337", 
-            "1190186065059644248", 
-            "1190186148257858423", 
-            "1190186050278916948", 
-            "1190186163139249019", 
-            "1190186142780097397", 
-            "1190186060160697175", 
-            "1190186114443379567", 
-            "1190185982968725881", 
-            "1190186085636899680", 
-            "1190186007648010622", 
-            "1190186100174357356", 
-            "1190186074958201690", 
-            "1190186045245752147", 
-            "1190186003042664829", 
-            "1190186123746345841", 
-            "1190186055446299478", 
-            "1190186070268969817", 
-            "1190186133720400755", 
-            "1190186012605677951", 
-            "1190185977826509176", 
-            "1190185988060610938", 
-            "1190186039767991121", 
-            "1190186168298242940", 
-            "1190186090510680929", 
-            "1190186080142361438", 
-            "1190186158391296890", 
-            "1190186119182943088", 
-            "1190186033384260301",
-            "1190186138426409844", 
-            "1190186109703816046", 
-            "1190186095510291306", 
-            "1190185998345044348", 
-            "1190186128855008114", 
-            "1190186028434981459", 
-            "1190186153140028281", 
-            "1190186017596899714", 
-            "1190186105090081645"]
+            "1310391102276109047", 
+            "1310391007510004445", 
+            "1310391245536756524", 
+            "1310391015764394719", 
+            "1310391057581605611", 
+            "1310391147230659339", 
+            "1310391188393558809", 
+            "1310391041198654183", 
+            "1310391066490307309", 
+            "1310390978804187859", 
+            "1310391180264997654", 
+            "1310391254059582255", 
+            "1310391294693998692", 
+            "1310391196522119963", 
+            "1310391155493438221", 
+            "1310391032415781605", 
+            "1310391138842051336", 
+            "1310390993484251864", 
+            "1310391228759540517", 
+            "1310391049453044457", 
+            "1310391164007875345", 
+            "1310391205170774813", 
+            "1310391237022319399", 
+            "1310391261928096561", 
+            "1310391113281962752", 
+            "1310391212770853663", 
+            "1310391093627454196", 
+            "1310391171742171924", 
+            "1310390985749955286", 
+            "1310391085238846194", 
+            "1310391075273179887", 
+            "1310391130327614213", 
+            "1310391122333270787", 
+            "1310391278705312711", 
+            "1310391000430019290", 
+            "1310391024027173603", 
+            "1310391270182486896", 
+            "1310391286959702040", 
+            "1310391220765197089"]
 
         this.randomArtifacts = [
             new RandomArtifact("artifact: 1138718566997033797", 1.0), 
@@ -126,7 +125,7 @@ export class MazeRenderer {
         let resourceId = MazeRenderer.floorResourceId
         var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, 0, scale.y / 2.0)
-        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
@@ -186,7 +185,7 @@ export class MazeRenderer {
         let resourceId = MazeRenderer.ceilingResourceId
         var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
-        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 90 * MRESDK.DegreesToRadians)
+        var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,

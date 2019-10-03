@@ -10,14 +10,49 @@ export class Sandbox {
     }
 
     public draw() {
+        this.drawOrigin()
         this.drawAxes()
 
+        this.drawMainArtifaclts()
+
+        this.drawUnitCube()
+        this.drawRandomArtifacts()
+
+        this.drawWallArtifacts()
+    }
+
+    private drawMainArtifaclts()
+    {
+        const renderer = new MazeRenderer(null, null, null)
+
+        this.drawArtifact(MazeRenderer.floorResourceId, 2, 0, 1.0)
+        this.drawArtifact(MazeRenderer.floorStartResourceId, 2, 1, 1.0)
+        this.drawArtifact(MazeRenderer.floorEndResourceId, 2, 2, 1.0)
+        this.drawArtifact(MazeRenderer.floorGrateResourceId, 2, 3, 1.0)
+
+        this.drawArtifact(MazeRenderer.wallGrateResourceId, 2, 4, 1.0)
+
+        this.drawArtifact(MazeRenderer.ceilingResourceId, 2, 5, 1.0)
+        this.drawArtifact(MazeRenderer.ceilingLightsResourceId, 2, 6, 1.0)
+    }
+
+    private drawRandomArtifacts() {
         const renderer = new MazeRenderer(null, null, null)
 
         var z = 0
         for (const artifact of renderer.randomArtifacts) {
-            this.drawArtifact(artifact.resourceId, 0, z, artifact.scale)
+            this.drawArtifact(artifact.resourceId, 4, z, artifact.scale)
             z = z + 1
+        }
+    }
+
+    private drawWallArtifacts() {
+        const renderer = new MazeRenderer(null, null, null)
+
+        var z = 0
+        for (const artifactId of renderer.wallArtifactIds) {
+            this.drawArtifact("artifact: " + artifactId, 6, z, 1.0)
+            z = z + 2
         }
     }
 
@@ -28,8 +63,7 @@ export class Sandbox {
                 transform: {
                     local: {
                         position: new MRESDK.Vector3(x, 0.0, z),
-                        scale: new MRESDK.Vector3(scale, scale, scale),
-                        rotation: MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), 0 * MRESDK.DegreesToRadians),
+                        scale: new MRESDK.Vector3(scale, scale, scale)
                     }
                 }
             }
@@ -40,7 +74,7 @@ export class Sandbox {
         const assetContainer = new MRESDK.AssetContainer(this.context)
 
         const whiteMaterial = assetContainer.createMaterial('white', {
-            color: new MRESDK.Color4(1, 1, 1, 0.5)
+            color: new MRESDK.Color4(1, 1, 1, 0.7)
         })
         whiteMaterial.alphaMode = MRESDK.AlphaMode.Blend
 
@@ -52,7 +86,24 @@ export class Sandbox {
                 },
                 transform: {
                     local: {
-                        position: new MRESDK.Vector3(0, 0, 0)
+                        position: new MRESDK.Vector3(4, 0.5, 0)
+                    }
+                }
+            }
+        })
+    }
+
+    private drawOrigin() {
+        const assetContainer = new MRESDK.AssetContainer(this.context)
+
+        MRESDK.Actor.Create(this.context, {
+            actor: {
+                appearance: { 
+                    meshId: assetContainer.createSphereMesh('sphere', 0.2, 15, 15).id  
+                },
+                transform: {
+                    local: {
+                        position: new MRESDK.Vector3(0.0, 0.0, 0.0)
                     }
                 }
             }
