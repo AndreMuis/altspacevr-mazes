@@ -183,9 +183,9 @@ export class MazeRenderer {
     private async drawCeiling() {
         // ceiling
         let resourceId = MazeRenderer.ceilingResourceId
+        var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
-        var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
