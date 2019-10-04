@@ -23,8 +23,6 @@ export class Sandbox {
 
     private drawMainArtifaclts()
     {
-        const renderer = new MazeRenderer(null, null, null)
-
         this.drawArtifact(MazeRenderer.floorResourceId, 2, 0, 1.0)
         this.drawArtifact(MazeRenderer.floorStartResourceId, 2, 1, 1.0)
         this.drawArtifact(MazeRenderer.floorEndResourceId, 2, 2, 1.0)

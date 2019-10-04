@@ -5,14 +5,14 @@ import { MazeRenderer } from "./maze-renderer"
 import { Sandbox } from "./sandbox"
 
 export default class App {
-    private isSandbox = false
+    private useSandbox = false
 
     constructor(private context: MRESDK.Context, private baseUrl: string) {
         this.context.onStarted(() => this.started())
     }
 
     private started() {
-        if (this.isSandbox == false) {
+        if (this.useSandbox == false) {
             var maze = new Maze(29, 29)
             maze.setup()
     
