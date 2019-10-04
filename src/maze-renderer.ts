@@ -14,7 +14,7 @@ export class MazeRenderer {
     private maze: Maze
     private scale: number
 
-    private delayInMilliseconds = 1000
+    private delayInMilliseconds = 100
 
     static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.005
