@@ -1,6 +1,6 @@
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk'
 
-import { Cell, CellType, Maze, WallSegment, Orientation, Direction } from "./maze"
+import { CellType, Maze, Orientation, Direction } from "./maze"
 import { Utility } from "./utility"
 import { Vector3 } from '@microsoft/mixed-reality-extension-sdk';
 
@@ -19,15 +19,15 @@ export class MazeRenderer {
     static readonly planeZeroScale = 0.001
     static readonly minInterPlanarDistance = 0.005
 
-    static readonly floorResourceId = "artifact: 1310377349564334600"
-    static readonly floorStartResourceId = "artifact: 1310377356510102026 "
-    static readonly floorEndResourceId = "artifact: 1310377342090084870"
-    static readonly floorGrateResourceId = "artifact: 1310377363724304908"
+    static readonly floorResourceId = "artifact: 1311121029560533558"
+    static readonly floorStartResourceId = "artifact: 1311121070060733049"
+    static readonly floorEndResourceId = "artifact: 1311121062720700993"
+    static readonly floorGrateResourceId = "artifact: 1311121046732014139"
 
-    static readonly wallGrateResourceId = "artifact: 1310377332787118596"
+    static readonly wallGrateResourceId = "artifact: 1311121054206263869"
 
-    static readonly ceilingResourceId = "artifact: 1310377318895583744"
-    static readonly ceilingLightsResourceId = "artifact: 1310377325967180290"
+    static readonly ceilingResourceId = "artifact: 1311121038083359288"
+    static readonly ceilingLightsResourceId = "artifact: 1311121020517614131"
 
     static readonly springCampfireResourceId = "teleporter: 1148791394312127008"
     
@@ -50,45 +50,45 @@ export class MazeRenderer {
         this.scale = scale
 
         this.wallArtifactIds = [
-            "1310391102276109047", 
-            "1310391007510004445", 
-            "1310391245536756524", 
-            "1310391015764394719", 
-            "1310391057581605611", 
-            "1310391147230659339", 
-            "1310391188393558809", 
-            "1310391041198654183", 
-            "1310391066490307309", 
-            "1310390978804187859", 
-            "1310391180264997654", 
-            "1310391254059582255", 
-            "1310391294693998692", 
-            "1310391196522119963", 
-            "1310391155493438221", 
-            "1310391032415781605", 
-            "1310391138842051336", 
-            "1310390993484251864", 
-            "1310391228759540517", 
-            "1310391049453044457", 
-            "1310391164007875345", 
-            "1310391205170774813", 
-            "1310391237022319399", 
-            "1310391261928096561", 
-            "1310391113281962752", 
-            "1310391212770853663", 
-            "1310391093627454196", 
-            "1310391171742171924", 
-            "1310390985749955286", 
-            "1310391085238846194", 
-            "1310391075273179887", 
-            "1310391130327614213", 
-            "1310391122333270787", 
-            "1310391278705312711", 
-            "1310391000430019290", 
-            "1310391024027173603", 
-            "1310391270182486896", 
-            "1310391286959702040", 
-            "1310391220765197089"]
+            "1311127266926788779",
+            "1311127223666737310", 
+            "1311127087746122403", 
+            "1311127104129073948",
+            "1311127112777728886", 
+            "1311127174517883021", 
+            "1311127120512025547", 
+            "1311127096000512711", 
+            "1311127245166739620", 
+            "1311127230880940192", 
+            "1311127331015753922", 
+            "1311127061263286939", 
+            "1311127151440822404", 
+            "1311127128246321183", 
+            "1311127253026865319", 
+            "1311127159443554439", 
+            "1311127323944157375", 
+            "1311127302838419639", 
+            "1311127274526867629", 
+            "1311127216720969884", 
+            "1311127070180377245", 
+            "1311127281606852784", 
+            "1311127196009496726", 
+            "1311127310044233914", 
+            "1311127143580696705", 
+            "1311127209775202458", 
+            "1311127317124219069", 
+            "1311127181589479569", 
+            "1311127338229956805", 
+            "1311127288678449331", 
+            "1311127166909415561", 
+            "1311127295632605365", 
+            "1311127345175724231", 
+            "1311127238220972194", 
+            "1311127188409417876", 
+            "1311127079617561247", 
+            "1311127202829435032", 
+            "1311127135712182379", 
+            "1311127260106850473"]
 
         this.randomArtifacts = [
             new RandomArtifact("artifact: 1138718566997033797", 1.0), 
@@ -183,9 +183,9 @@ export class MazeRenderer {
     private async drawCeiling() {
         // ceiling
         let resourceId = MazeRenderer.ceilingResourceId
-        var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
         var position = this.getPosition(0, 0, scale.x / 2.0, this.scale, scale.y / 2.0)
         var rotation = MRESDK.Quaternion.RotationAxis(MRESDK.Vector3.Right(), -90 * MRESDK.DegreesToRadians)
+        var scale = new MRESDK.Vector3(39 * this.scale, 39 * this.scale, MazeRenderer.planeZeroScale)
 
         MRESDK.Actor.CreateFromLibrary(this.context, {
             resourceId: resourceId,
